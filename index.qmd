@@ -1,0 +1,1216 @@
+---
+title: "DACSS603Final"
+author: "Theresa Szczepanski"
+desription: "MCAS G9 Science Analysis"
+date: "10/22/2023"
+
+format:
+  html:
+    embed-resources: true
+    self-contained-math: true
+    df-print: paged
+    toc: true
+    code-fold: true
+    code-copy: true
+    code-tools: true
+    
+bibliography: references.bib
+
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r}
+#| label: setup
+#| warning: false
+#| message: false
+
+source('dependencies.R')
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
+#install.packages("stargazer")
+#library(stargazer)
+#library(flexmix)
+
+#library(qpcR)
+```
+
+# Research Questions
+
+The Massachusetts Education Reform Act in 1993 was passed in the context
+of a national movement toward education reform throughout the United
+States. As early as 1989 there were calls to establish national
+curriculum standards as a way to improve student college and career
+readiness skills and close poverty gaps [@Greer18]. Massachusetts
+Comprehensive Assessment System (MCAS) tests were introduced as part of
+the Massachusetts Education Reform Act.
+
+The MCAS tests are a significant tool for educational equity. Scores on
+the Grade 10 Math MCAS test "predict longer-term educational attainments
+and labor market success, above and beyond typical markers of student
+advantage" and differences among students are largely and "sometimes
+completely accounted for" by differences in 10th grade MCAS scores and
+educational attainments. [@Boats20].
+
+With the introduction of the new Common Core standards and
+accountability testing came the demand for aligned curricular materials
+and teaching practices. Research indicates that the choice of
+instructional materials can have an impact "as large as or larger than
+the impact of teacher quality" [@Blindly12]. Massachusetts, along with
+Arkansas, Delaware, Kentucky, Louisiana, Maryland, Mississippi,
+Nebraska, New Mexico, Ohio, Rhode Island, Tennessee, and Texas belongs
+to the Council of Chief State School Officers' (CCSO), [High Quality
+Instructional Materials and Professional Development
+network](https://learning.ccsso.org/high-quality-instructional-materials)
+which aims to close the "opportunity gap" among students by ensuring
+that every teacher has access to high-quality, standards aligned
+instructional materials and receives relevant professional development
+to support their use of these materials [@IMPD21].
+
+All Massachusetts Public School students must complete a High School
+science MCAS exam providing a wealth of standardized data on students'
+discipline specific skill development. All schools receive annual
+summary reports on student performance. Significant work has been done
+using the MCAS achievement data and the Student Opportunity Act to
+identify achievement gaps and address funding inequities across the
+Commonwealth [@Boats20]. With funding gaps outlined in the late 1990's
+closing, one could consider how the MCAS data could be leveraged to
+support the state's current high quality instructional materials
+initiatives. The state compiles school's performance disaggregated by
+each MCAS question item [@MCASIT].
+
+Using the curricular information provided in state wide Next Generation
+MCAS High School Introductory Physics Item reports together with
+school-level student performance data, we hope to address the following
+broad questions:
+
+```{=html}
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+```
+::: blue
+-   Is there a relationship between differences in a school's
+    performance across Science Practice Categories and a school's
+    overall achievement on the Introductory Physics exam?
+
+-   How can trends in a school's performance be used to provide schools
+    with guidance on discipline-specific curricular areas to target to
+    improve student achievement?
+:::
+
+In this report, I will analyze the High School Introductory Physics Next
+Generation [Massachusetts Comprehensive Assessment System
+(MCAS)](https://www.doe.mass.edu/mcas/default.html) tests results for
+Massachusetts public schools.
+
+Data for the study were drawn from DESE's Next Generation MCAS Test
+[Achievement Results statewide
+report](https://profiles.doe.mass.edu/statereport/mcas.aspx), [Item
+Analysis statewide
+report](https://profiles.doe.mass.edu/statereport/nextgenmcas_item.aspx),
+and the [MCAS digital item
+library](https://mcas.digitalitemlibrary.com/home?subject=Science&grades=Physics&view=ALL).
+The Next Generation High School Introductory Physics MCAS assessment
+consists of 42 multiple choice and constructed response items that
+assess students on Physical Science standards from the [2016 STE
+Massachusetts Curriculum
+Framework](https://www.doe.mass.edu/frameworks/scitech/2016-04.pdf) in
+the content `Reporting Categories` of Motions and Forces, `MF`, Energy,
+`EN`, and Waves, `WA`. Each item is associated with a specific content
+standard from the Massachusetts Curriculum Framework as well as an
+underlying science `Practice Category` of Evidence Reasoning and
+Modeling, `ERM`, Mathematics and Data, `MD`, or Investigations and
+Questioning, `IQ`. The State Item Report provides the percentage of
+points earned by students in a school for each item as well as the
+percentage of points earned by all students in the state for each item.
+
+The `HSPhy_NextGen_SchoolSum` data frame contains summary performance
+results from 112 public schools across the commonwealth on the Next
+Generation High School Introductory Physics MCAS, which was administered
+in the Spring of 2022 and 2023. 87 schools tested students in both years
+and 25 schools only tested students in 1 of the 2 testing years, with
+27,745 students completing the exam.
+
+For each school, there are values reported for 44 different variables
+which consist of information from three broad categories
+
+-   *School Characteristics*: This includes the name of the school and
+    the size of the school, `School Size`, as determined by the number
+    of students that completed the MCAS exam.
+
+-   *Discipline-Specifc Performance Metrics*: This includes the
+    percentage of points earned by students at a school for items each
+    content `Reporting Category`, `MF%`, `EN%`, `WA%` and science
+    `Practice Category` `ERM%`, `MD%`, `IQ%`, the difference between a
+    school's percentage of points earned compared to the percentage of
+    points earned by all students in the state (`MFDiff`, `ENDiff`,
+    etc...), and the variability in a school's performance relative to
+    the state by category as measured by the standard deviation of the
+    school's `Diff` across categories (`SD MF Diff`, `SD EN Diff`,
+    etc...).
+
+-   *Aggregate Performance Level metrics*: This includes a school's
+    percentage of students at each of the four `Performance Levels`,
+    (`E%`: Exceeding Expectations, `M%`: Meeting Expectations, `PM%`:
+    Partially Meeting Expectations, and `NM%`: Not Meeting
+    Expectations), the difference between these percentages and the
+    percentage of students in Massachusetts at each performance level
+    (`EDiff`, `MDiff`, `PMDiff`, `NMDiff`), and an ordinal
+    classification of school's, `EM Perf Stat` based on the percentage
+    of students that were classified as Exceeding or Meeting
+    expectations on the exam (`HighEM`, `HighM`, `Mid`, `Mid-Low`,
+    `Low`).
+
+See the `HSPhy_NextGenMCASDF` data frame summary and **codebook** for
+further details about all variables.
+
+# Hypotheses
+
+```{=html}
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+```
+::: blue
+-   A school's percentage of students classified as `Exceeding`
+    expectations on the Introductory Physics MCAS is negatively
+    associated with a school's variance in performance relative to
+    students in the state on `Mathematics and Data` items, `SD MD Diff`.
+
+-   A school's summary performance on items in a given content
+    `Reporting Category` as measured by `MF%`, `EN%`, and `WA%`, is
+    positively associated with the `Reporting Category's` weight within
+    the exam.
+:::
+
+# Descriptive Statistics
+
+```{r}
+#| label: dataframe setup
+#| warning: false
+#| message: false
+
+#HSPhy_NextGen_SchoolSum
+HSPhy_NextGen_SchoolSum<-HSPhy_NextGen_SchoolSum%>%
+  ungroup()
+
+#HSPhy_NextGen_SchoolSum
+# HSPhy_NextGen_PerfDF
+# HSPhy_NextGen_SchoolIT301DF
+
+HSPhy_2023_SchoolSizeDF<-read_excel("data/2023_Physics_NextGenMCASItem.xlsx", skip = 1)%>%
+  select(`School Name`, `School Code`, `Tested`)%>%
+  mutate(`Tested` = as.integer(`Tested`))%>%
+  select(`School Name`, `School Code`, `Tested`)
+
+HSPhy_2022_SchoolSizeDF<-read_excel("data/2022_Physics_NextGenMCASItem.xlsx", skip = 1)%>%
+  select(`School Name`, `School Code`, `Tested`)%>%
+  mutate(`Tested` = as.integer(`Tested`))%>%
+  select(`School Name`, `School Code`, `Tested`)
+
+
+HSPhy_SchoolSize <- rbind(HSPhy_2023_SchoolSizeDF, HSPhy_2022_SchoolSizeDF)%>%
+  mutate(count = 1)%>%
+  group_by(`School Name`, `School Code`)%>%
+  summarise(count = sum(count),
+            `Tested` = sum(`Tested`))%>%
+  mutate(`Tested Count` = round(`Tested`/count))%>%
+  ungroup()
+#HSPhy_SchoolSize
+quantile <- quantile(HSPhy_SchoolSize$`Tested Count`)
+HSPhy_Size<-HSPhy_SchoolSize%>%
+  mutate(`School Size` = case_when(
+    `Tested Count` <= quantile[2] ~ 0, # small
+    `Tested Count` > quantile[2] &
+      `Tested Count` <= quantile[3] ~ 1, #Low-Mid
+    `Tested Count` > quantile[3] &
+      `Tested Count` <= quantile[4] ~ 2, #Upper Mid
+    `Tested Count` > quantile[4] &
+      `Tested Count` <= quantile[5] ~ 3, # Large
+  ))%>%
+  # mutate(`School Size` = recode_factor(`School Size`,
+  #                                           "Small" = "Small",
+  #                                           "Low-Mid" = "Low-Mid",
+  #                                           "Upper-Mid" = "Upper-Mid",
+  #                                           "Large" = "Large",
+  #                                           .ordered = TRUE))%>%
+  select(`School Name`, `School Code`, `School Size`)
+
+
+#HSPhy_Size
+
+HSPhy_NextGen_SchoolSum<-HSPhy_NextGen_SchoolSum%>%
+  left_join(HSPhy_Size, by = c("School Name" = "School Name", "School Code" = "School Code"))%>%
+  mutate(`EMDiff` = `EDiff` + `MDiff`)%>%
+  mutate(`EM Perf Stat` = case_when(
+    `EDiff` > 0 & `EDiff` + `MDiff` > 0 ~ "HighEM",
+    `EDiff` <= 0 & `EDiff` + `MDiff` > 0 ~ "HighM",
+    #`EMDiff` > quantile(HSPhy_NextGen_SchoolSum$`EMDiff`)[3] & 
+      `EMDiff` <= 0  & `EMDiff` > -14 ~ "Mid",
+    `EMDiff` <= -14 & `EMDiff` >= -33  ~ "Mid-Low",
+    `EMDiff` < -33  ~ "Low"
+   
+  ))%>%
+  mutate(`EM Perf Stat` = recode_factor(`EM Perf Stat`,
+                                 "HighEM" = "HighEM",
+                                 "HighM" = "HighM",
+                                 "Mid" = "Mid",
+                                 "Mid-Low" = "Mid-Low",
+                                 "Low" = "Low",
+                                 .ordered = TRUE))
+HSPhy_NextGen_SchoolSum
+#quantile(HSPhy_NextGen_SchoolSum$`EMDiff`)
+
+                                      
+
+#summary(HSPhy_NextGen_SchoolSum)
+print(summarytools::dfSummary(HSPhy_NextGen_SchoolSum,
+                         varnumbers = FALSE,
+                         plain.ascii  = FALSE,
+                         style        = "grid",
+                         graph.magnif = 0.70,
+                        valid.col    = FALSE),
+       method = 'render',
+       table.classes = 'table-condensed')
+
+```
+
+## Key Variables
+
+To explore the relationship between the distribution of school's
+students' `Performance Level` and school's performance in content
+categories, we examine the percentage of points earned by students at
+schools as well as the standard deviation of the difference between
+points earned by students at a school and points earned by students in
+the state across `Reporting Categories` and `Practice Categories`. We
+grouped schools by their `EM Perf Stat`, an ordinal variable classifying
+schools by the percentage of students they have that were classified as
+either Exceeding or Meeting expectations on the MCAS. These numbers seem
+to suggest that items classified with the Science `Practice Category` of
+`Mathematics and Data` seem to be more challenging to students than
+those classified as `Evidence, Reasoning, and Modeling`. These practice
+categories are strongly and equally emphasized within the exam; items
+tagged with these categories account for **82%** of the available points
+on the exam with exactly **41%** of available points coming from each
+category.
+
+When considering content `Reporting Categories`, there do not seem to be
+discernible distinctions between `EM Perf Stat` and school's achievement
+and performance across categories. All schools seem to perform the
+strongest on `Motion and Forces` items, followed by `Energy`, and
+weakest on `Waves` items. Notably, this is also the order of the
+relative weights of the content areas within the exam; `MF`, `EN`, and
+`WA` items account for **50%**, **30%**, and **20%** of exam points
+respectively.
+
+```{r}
+
+ #quantile(HSPhy_NextGen_SchoolSum$`EMDiff`)
+
+
+ 
+HSPhy_NextGen_SchoolSum%>%
+  group_by(`EM Perf Stat`)%>%
+    summarise( `Mean MD%` = mean(`MD%`), 
+              `Mean MD SD` = mean(`MD Diff SD`),
+              `Mean ERM%` = mean(`ERM%`),
+               `Mean ERM SD` = mean (`ERM Diff SD`))
+
+
+HSPhy_NextGen_SchoolSum%>%
+  group_by(`EM Perf Stat`)%>%
+    summarise( `Mean MF%` = mean(`MF%`), 
+              `Mean MF SD` = mean(`MF Diff SD`),
+              `Mean EN%` = mean(`EN%`),
+               `Mean EN SD` = mean (`EN Diff SD`),
+              `Mean WA%` = mean(`WA%`),
+               `Mean WA SD` = mean (`WA Diff SD`)
+              )
+
+
+
+```
+
+# Visualization
+
+## Distribution of Performance Level %
+
+When examining the statewide performance distribution, we can see from
+the right-skew that it is rare for schools to have high percentages of
+students classified as `Not Meeting` expectations and even rarer for
+schools to have high percentages of students classified as `Exceeding`
+expectations.
+
+```{r}
+HSPhy_NextGen_SchoolSum%>%
+  select(`E%`, `M%`, `PM%`, `NM%`)%>%
+  pivot_longer(c(1:4), names_to = "Performance Level", values_to = "% Students")%>%
+   ggplot( aes(x=`% Students`, color=`Performance Level`, fill=`Performance Level`)) +
+    geom_histogram(alpha=0.6, binwidth = 15) +
+    scale_fill_viridis(discrete=TRUE) +
+    scale_color_viridis(discrete=TRUE) +
+    #theme_ipsum() +
+    theme(
+      legend.position="none",
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    ) +
+  
+    facet_wrap(~`Performance Level`)+
+      labs( y = "",
+            title = "School Performance Level Distribution",
+            x = "% Students at Performance Level",
+            caption = "NextGen HS Physics MCAS")
+
+
+```
+
+## Distribution of School Performance and Variability by Practice Cat
+
+Although `Mathematics and Data` and `Evidence, Reasoning, and Modeling`
+items have strong and equal weighting in the HS Introductory Physics
+exam, student performance distributions are noticeably different across
+these practice categories.
+
+```{r}
+
+HSPhy_NextGen_SchoolSum%>%
+  select(`ERM%`, `MD%`)%>%
+  pivot_longer(c(1:2), names_to = "Practice Cat", values_to = "% Points")%>%
+   ggplot( aes(x=`% Points`, color=`Practice Cat`, fill=`Practice Cat`)) +
+    geom_histogram(alpha=0.6, binwidth = 3) +
+    scale_fill_viridis(discrete=TRUE) +
+    scale_color_viridis(discrete=TRUE) +
+    #theme_ipsum() +
+    theme(
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    ) +
+  
+    facet_wrap(~`Practice Cat`)+
+      labs( y = "",
+            title = "School Performance by Practice Category",
+            x = "% Points Earned",
+            caption = "NextGen HS Physics MCAS")
+  #ggtitle("Practice Category Performance")
+
+
+```
+
+When considering the variability of a school's performance on items
+relative to the state by `Practice Category`, `SD MD Diff`, and
+`SD ERM Diff`, we can see that `Mathematics and Data` is skewed more to
+the right.
+
+```{r}
+  
+  HSPhy_NextGen_SchoolSum%>%
+  select(`ERM Diff SD`, `MD Diff SD`)%>%
+  pivot_longer(c(1:2), names_to = "Practice Cat", values_to = "SD Diff")%>%
+   ggplot( aes(x=`SD Diff`, color=`Practice Cat`, fill=`Practice Cat`)) +
+    geom_histogram(alpha=0.6, binwidth = 3) +
+    scale_fill_viridis(discrete=TRUE) +
+    scale_color_viridis(discrete=TRUE) +
+   # theme_ipsum() +
+    theme(
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    ) +
+      labs( y = "",
+            title = "School Performance Variation by Practice Category",
+            x = "SD Diff",
+            caption = "NextGen HS Physics MCAS") +
+    facet_wrap(~`Practice Cat`)
+```
+
+## Mathematics and Data vs. Evidence Reasoning and Modeling (Practice Category)
+
+These images, seem to suggest that schools with the **highest**
+percentage of students classified as `Exceeding` expectations on the
+MCAS have the **lowest** levels of variation in performance on
+`Mathematics and Data` Items and schools with the **lowest** percentage
+of students classified as `Exceeding` expectations on the MCAS have the
+**highest** levels of variation in performance on
+`Mathematics and Data Items`.
+
+```{r}
+
+
+HSPhy_NextGen_SchoolSum%>%
+  select(`EM Perf Stat`, `ERM Diff SD`, `MD Diff SD` )%>%
+  pivot_longer(c(2:3), names_to = "Practice Cat", values_to = "SD Diff")%>%
+  ggplot( aes(x= `EM Perf Stat`, y=`SD Diff`, fill= `EM Perf Stat`)) +
+    geom_boxplot() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    
+    theme(
+      plot.title = element_text(size=11),
+      axis.title.x=element_blank(),
+      #axis.text.x=element_blank()
+    ) +
+ 
+    labs( y = "SD Diff",
+            title = "Student Performance Variation by Practice Category",
+            x = "",
+            caption = "NextGen HS Physics MCAS") +
+  facet_wrap(~`Practice Cat`)
+
+
+      
+
+
+HSPhy_NextGen_SchoolSum%>%
+  select(`EM Perf Stat`, `ERM Diff SD`, `MD Diff SD` )%>%
+  pivot_longer(c(2:3), names_to = "Practice Cat", values_to = "SD Diff")%>%
+  ggplot( aes(x= `Practice Cat`, y=`SD Diff`, fill= `Practice Cat`)) +
+    geom_boxplot() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    #theme_ipsum() +
+    theme(
+     
+      plot.title = element_text(size=11),
+      axis.title.x=element_blank(),
+      axis.text.x=element_blank()
+    ) +
+     labs( y = "SD Diff",
+            title = "Student Practice Cat. Variation by Achievement Level",
+            x = "",
+            caption = "NextGen HS Physics MCAS") +
+    #xlab("")+
+  facet_wrap(~`EM Perf Stat`)
+```
+
+These images, seem to suggest that students at all schools seem to have
+more difficulty with `Mathematics and Data` items as compared to
+`Evidence, Reasoning, and Modeling Items`.
+
+```{r}
+HSPhy_NextGen_SchoolSum%>%
+  select(`EM Perf Stat`, `ERM%`, `MD%` )%>%
+  pivot_longer(c(2:3), names_to = "Practice Cat", values_to = "%Points")%>%
+  ggplot( aes(x= `EM Perf Stat`, y=`%Points`, fill= `EM Perf Stat`)) +
+    geom_boxplot() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    #theme_ipsum() +
+    theme(
+      
+      plot.title = element_text(size=11)
+    ) +
+    labs( y = "%Points Earned",
+            title = "Student Practice Cat. Achievement by Performance Level",
+            x = "",
+            caption = "NextGen HS Physics MCAS") +
+    #xlab("")+
+  facet_wrap(~`Practice Cat`)
+```
+
+```{r}
+HSPhy_NextGen_SchoolSum%>%
+  select(`EM Perf Stat`, `ERM%`, `MD%` )%>%
+  pivot_longer(c(2:3), names_to = "Practice Cat", values_to = "%Points")%>%
+  ggplot( aes(x= `Practice Cat`, y=`%Points`, fill= `Practice Cat`)) +
+    geom_boxplot() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    #theme_ipsum() +
+    theme(
+      
+      plot.title = element_text(size=11)
+    ) +
+    labs( y = "%Points Earned",
+            title = "Student Practice Cat. Achievement by Performance Level",
+            x = "",
+            caption = "NextGen HS Physics MCAS") +
+    #xlab("")+
+  facet_wrap(~`EM Perf Stat`, scale ="free_y")
+
+```
+
+## Distribution of School Performance and Variability by Reporting Cat
+
+Here we can visualize the variability of a school's performance on items
+partitioned by Content `Reporting Category` of `Motion and Forces`,
+`Energy`, and `Waves` via: `MF%`/`SD MF Diff`, `EN%`/`SD EN Diff`, and
+`WA%`/`SD WA Diff`.
+
+```{r}
+  HSPhy_NextGen_SchoolSum%>%
+  select(`EM Perf Stat`, `MF Diff SD`, `EN Diff SD`, `WA Diff SD` )%>%
+  pivot_longer(c(2:4), names_to = "Report Cat", values_to = "SD Diff")%>%
+  ggplot( aes(x=`SD Diff`, color=`Report Cat`, fill=`Report Cat`)) +
+    geom_histogram(alpha=0.6, binwidth = 3) +
+    scale_fill_viridis(discrete=TRUE) +
+    scale_color_viridis(discrete=TRUE) +
+    #theme_ipsum() +
+    theme(
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    ) +
+      labs( y = "",
+            title = "School Performance Variation by Content Reporting Category",
+            x = "SD Diff",
+            caption = "NextGen HS Physics MCAS") +
+  facet_wrap(~`Report Cat`)
+
+```
+
+```{r}
+HSPhy_NextGen_SchoolSum%>%
+  select(`EM Perf Stat`, `MF%`, `EN%`, `WA%` )%>%
+  pivot_longer(c(2:4), names_to = "Report Cat", values_to = "% Points")%>%
+ ggplot( aes(x=`% Points`, color=`Report Cat`, fill=`Report Cat`)) +
+    geom_histogram(alpha=0.6, binwidth = 3) +
+    scale_fill_viridis(discrete=TRUE) +
+    scale_color_viridis(discrete=TRUE) +
+    #theme_ipsum() +
+    theme(
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    ) +
+  
+    facet_wrap(~`Report Cat`)+
+      labs( y = "",
+            title = "Student Performance by Content Reporting Category",
+            x = "% Points Earned",
+            caption = "NextGen HS Physics MCAS")
+  #ggtitle("Practice Category Performance")
+
+
+```
+
+## Motion and Forces vs. Energy vs. Waves (Reporting Category)
+
+These images suggest that most schools exhibit similar levels of
+variability in performance relative to the state across all reporting
+categories. Schools with the ***lowest percentage*** of students
+`Exceeding` expectations exhibit ***high variability*** in performance
+across all content reporting categories, but seem to have lower
+variability on `Waves` items.
+
+```{r}
+
+HSPhy_NextGen_SchoolSum%>%
+  select(`EM Perf Stat`, `MF Diff SD`, `EN Diff SD`, `WA Diff SD` )%>%
+  pivot_longer(c(2:4), names_to = "Report Cat", values_to = "SD Diff")%>%
+  ggplot( aes(x= `EM Perf Stat`, y=`SD Diff`, fill= `EM Perf Stat`)) +
+    geom_boxplot() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    
+    theme(
+      plot.title = element_text(size=11),
+      axis.title.x=element_blank(),
+      axis.text.x=element_blank()
+    ) +
+ 
+    labs( y = "SD Diff",
+            title = "School Performance Variation by Content Reporting Category",
+            x = "",
+            caption = "NextGen HS Physics MCAS") +
+  facet_wrap(~`Report Cat`)
+
+
+      
+
+
+HSPhy_NextGen_SchoolSum%>%
+  select(`EM Perf Stat`, `MF Diff SD`, `EN Diff SD`, `WA Diff SD` )%>%
+  pivot_longer(c(2:4), names_to = "Report Cat", values_to = "SD Diff")%>%
+  ggplot( aes(x= `Report Cat`, y=`SD Diff`, fill= `Report Cat`)) +
+    geom_boxplot() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    #theme_ipsum() +
+    theme(
+     
+      plot.title = element_text(size=11),
+      axis.title.x=element_blank(),
+      axis.text.x=element_blank()
+    ) +
+     labs( y = "SD Diff",
+            title = "School Content Reporting Cat. Variation by Achievement Level",
+            x = "",
+            caption = "NextGen HS Physics MCAS") +
+    #xlab("")+
+  facet_wrap(~`EM Perf Stat`)
+
+
+HSPhy_NextGen_SchoolSum%>%
+  select(`EM Perf Stat`, `MF%`, `EN%`, `WA%` )%>%
+  pivot_longer(c(2:4), names_to = "Report Cat", values_to = "% Points")%>%
+  ggplot( aes(x= `Report Cat`, y=`% Points`, fill= `Report Cat`)) +
+    geom_boxplot() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    #theme_ipsum() +
+    theme(
+
+      plot.title = element_text(size=11),
+      axis.title.x=element_blank(),
+      axis.text.x=element_blank()
+    ) +
+     labs( y = "Report Cat%",
+            title = "School Content Reporting Cat. Performance by Achievement Level",
+            x = "",
+            caption = "NextGen HS Physics MCAS") +
+    #xlab("")+
+  facet_wrap(~`EM Perf Stat`)
+
+
+```
+```{r}
+HSPhy_NextGen_SchoolSum<-HSPhy_NextGen_SchoolSum%>%
+  ungroup()
+
+HSPhy_NextGen_SchoolSum<-HSPhy_NextGen_SchoolSum%>%
+  mutate(`EorM%` = `E%` + `M%`)
+
+#HSPhy_NextGen_SchoolSum
+
+```
+
+## Visualization of School Size, EorM%, MD Diff, ERM Diff
+
+To explore the relationship between the variance in a schools' `Diff`
+compared to the state on Mathematics and Data items, `MD Diff SD` and a
+school's percentage of students meeting or exceeding expectations on the
+MCAS, `EorM%`, we also will considered the impact
+of `School Size`, `0`: Smallest, `3`: Largest schools, as a control. It appears from our visuals that
+`Small` schools have a higher variation in mathematics and data items
+smaller school's typically perform worse on Mathematics and Data and overall on the
+MCAS compared to larger schools.
+
+```{r}
+
+
+HSPhy_NextGen_SchoolSum%>%
+  group_by(`School Size`)%>%
+  summarize(
+    `Mean EorM%` = mean(`EorM%`),
+      `Mean MD%` = mean(`MD%`),
+     `Mean MD Diff SD` = mean(`MD Diff SD`),
+     `Mean ERM%` = mean(`ERM%`),
+     `Mean ERM Diff SD` = mean(`ERM Diff SD`)
+             )
+
+
+
+
+```
+
+```{r}
+
+
+HSPhy_NextGen_SchoolSum%>%
+  select(`School Size`, `MD Diff SD`, `ERM Diff SD` )%>%
+  pivot_longer(c(2:3), names_to = "Practice Cat", values_to = "SD Diff")%>%
+  ggplot( aes(x= `Practice Cat`, y=`SD Diff`, fill= `Practice Cat`)) +
+    geom_boxplot() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    #theme_ipsum() +
+    theme(
+
+      plot.title = element_text(size=11),
+      axis.title.x=element_blank(),
+      axis.text.x=element_blank()
+    ) +
+     labs( y = "SD Diff",
+            title = "Student Practice Cat. Variation by School Size",
+            x = "",
+            caption = "NextGen HS Physics MCAS") +
+    #xlab("")+
+  facet_wrap(~`School Size`, scale = "free")
+
+
+HSPhy_NextGen_SchoolSum%>%
+  select(`School Size`, `MD%`, `ERM%` )%>%
+  pivot_longer(c(2:3), names_to = "Practice Cat", values_to = "%Points")%>%
+  ggplot( aes(x= `Practice Cat`, y=`%Points`, fill= `Practice Cat`)) +
+    geom_boxplot() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    #theme_ipsum() +
+    theme(
+
+      plot.title = element_text(size=11),
+      axis.title.x=element_blank(),
+      axis.text.x=element_blank()
+    ) +
+     labs( y = "% Points Earned",
+            title = "Student Practice Cat. Achievement by School Size",
+            x = "",
+            caption = "NextGen HS Physics MCAS") +
+    #xlab("")+
+  facet_wrap(~`School Size`)
+
+```
+
+However, when you group the schools by `EM Perf Stat`, you find that the
+highest performing, `High EM`, `Small` schools have a higher percentage
+of students meeting or exceeding expectations.
+
+Across all sizes, it seems that the weakest performing schools have more
+variation in mathematics and data and the strongest performing schools
+have less variability in `Mathematics and Data` than in
+`Evidence, Reasoning, and Modeling`.
+
+```{r}
+
+# Faceted by performance level
+  HSPhy_NextGen_SchoolSum%>%
+  group_by(`School Size`, `EM Perf Stat`)%>%
+  summarize(`Mean EorM%` = mean(`EorM%`),
+      `Mean MD%` = mean(`MD%`),
+     `Mean MD Diff SD` = mean(`MD Diff SD`),
+     `Mean ERM%` = mean(`ERM%`),
+     `Mean ERM Diff SD` = mean(`ERM Diff SD`)
+             )
+
+# HSPhy_NextGen_SchoolSum%>%
+#   select(`School Size`, `EorM%`, `MD Diff SD`, `EM Perf Stat` )%>%
+#   #pivot_longer(c(2:3), names_to = "Practice Cat", values_to = "SD Diff")%>%
+#   ggplot( aes(x= `School Size`, y=`EorM%`, fill= `School Size`)) +
+#     geom_boxplot() +
+#     scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+#     geom_jitter(color="black", size=0.4, alpha=0.9) +
+#     #theme_ipsum() +
+#     theme(
+#      
+#       plot.title = element_text(size=11),
+#       axis.title.x=element_blank(),
+#       axis.text.x=element_blank()
+#     ) +
+#      labs( y = "SD Diff",
+#             title = "Students Meeting or Exceeding Expectations . Variation by Achievement Level",
+#             x = "",
+#             caption = "NextGen HS Physics MCAS") +
+#     #xlab("")+
+#   facet_wrap(~`EM Perf Stat`, scales = "free")
+
+
+```
+
+
+# Hypothesis 1: Variation in Mathematics
+
+```{=html}
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+```
+::: blue
+-   A school's percentage of students classified as
+    `Exceeding or Meeting` expectations on the Introductory Physics MCAS
+    is negatively associated with a school's variance in performance
+    relative to students in the state on `Mathematics and Data` items,
+    `SD MD Diff`.
+:::
+
+
+
+
+I fit several models with `EorM%` as the response variable and `MD Diff SD` as the key explanatory variable.
+
+Then, I will consider controlling for the following:
+
+Control for the variability in the other largest Science Practice Category, `Evidence, Reasoning, and Modeling`
+* Explanatory: `ERM Diff SD`
+
+Control for School Size
+
+* `School Size`
+* Explanatory: `School Size`
+
+Control for the variability in the other content Reporting Categories: `Waves`, `Motion and Forces`, and `Energy`
+
+*  Explanatory: `WA Diff SD`
+*  Explanatory: `MF Diff SD`
+*  Explanatory: `EN Diff SD`
+
+
+## Fit 1: Explanatory: `MD Diff SD`
+
+When we consider `MD Diff SD` without controlling for other variables, we have
+
+* $p-value: 2.726e-09$
+* adjusted $r^2 = .27$
+* AIC = 1021.3
+* BIC = 1029.5
+
+```{r}
+fit_md = lm(`EorM%` ~ (`MD Diff SD`), data = HSPhy_NextGen_SchoolSum)
+summary(fit_md)
+AIC(fit_md)
+BIC(fit_md)
+
+```
+## Fit 2: Explanatory: `MD Diff SD` + `ERM Diff SD`
+
+When we control for the variation in the other Science Practice Category, `Evidence Reasoning, and Modeling`, 
+`ERM Diff SD` is not significant and does not have a significant interaction with `MD Diff SD`
+
+```{r}
+fit_md_erm = lm(`EorM%` ~ (`MD Diff SD` + `ERM Diff SD`), data = HSPhy_NextGen_SchoolSum)
+summary(fit_md_erm)
+
+fit_md_erm_interact = lm(`EorM%` ~ (`MD Diff SD` + `ERM Diff SD` + `MD Diff SD` * `ERM Diff SD`), data = HSPhy_NextGen_SchoolSum)
+summary(fit_md_erm_interact)
+
+
+```
+## Fit 3: Explanatory: `MD Diff SD` + `WA Diff SD`
+
+When we control for the variation in the Content Reporting Category, `Waves`: `WA Diff SD`
+
+
+`Motion and Forces`: `MD SD Diff`, 
+`Energy`: `EN Diff SD`, and `Waves`: `WA Diff SD`, without considering interaction, there is not a statistical significance 
+to `WA Diff SD`. However, when we include the interaction between `WA Diff SD` and `MD Diff SD`
+
+we have that `MD Diff SD` is still statistically significant and there is a statistically significant, $p = 039$ interaction effect between `WA Diff SD` and `MD Diff SD`. For our model we have:
+
+* $p-value: 2.726e-09$
+* adjusted $r^2 = .28$
+* AIC = 1018
+* BIC = 1031
+
+```{r}
+fit_md_wa = lm(`EorM%` ~ (`MD Diff SD` + `WA Diff SD`), data = HSPhy_NextGen_SchoolSum)
+summary(fit_md_wa)
+
+fit_md_wa_interact= lm(`EorM%` ~ (`MD Diff SD` + `WA Diff SD` + `MD Diff SD`*`WA Diff SD`), data = HSPhy_NextGen_SchoolSum)
+summary(fit_md_wa_interact)
+AIC(fit_md_wa_interact)
+BIC(fit_md_wa_interact)
+
+
+```
+
+When we consider adding a second content reporting category, `Motion and Forces`, only `MD Diff SD` is statistically significant. So we will control for content with just one reporting category, `Waves`.
+
+```{r}
+fit_md_wa_mf = lm(`EorM%` ~ (`MD Diff SD` + `WA Diff SD` + `MD Diff SD`*`WA Diff SD` + `MF Diff SD` + `MD Diff SD`*`MF Diff SD`), data = HSPhy_NextGen_SchoolSum)
+summary(fit_md_wa_mf)
+
+```
+## Fit 4: Explanatory: `MD Diff SD` + `WA Diff SD`, `School Size`
+
+When we add the explanatory variable `School Size` to our model, `WA Diff SD` no longer has a statistically significant interaction with `MD Diff SD`.
+
+```{r}
+
+fit_md_wa_size = lm(`EorM%` ~ (`MD Diff SD` + `WA Diff SD` +  `MD Diff SD`*`WA Diff SD` + `School Size`), data = HSPhy_NextGen_SchoolSum)
+summary(fit_md_wa_size)
+
+
+fit_md_size_interact = lm(`EorM%` ~ (`MD Diff SD`  + `School Size` + `MD Diff SD`* `School Size`), data = HSPhy_NextGen_SchoolSum)
+summary(fit_md_size_interact)
+
+
+fit_md_size_interact = lm(`EorM%` ~ (`MD Diff SD` + `School Size` + `WA Diff SD` + `WA Diff SD`*`MD Diff SD` +  `MD Diff SD` * `School Size`), data = HSPhy_NextGen_SchoolSum)
+summary(fit_md_size_interact)
+
+```
+## Fit 5: Explanatory: `MD Diff SD`  `School Size`
+
+When we control for the variation in `School Size` and remove content reporting categories from our model,
+we have that `MD Diff SD`: $p =.001$ and `School Size`: $p = .006$ are both statistically significant and there is a statistically significant, $p = 003$, interaction effect between `MD Diff SD` and `School Size`. For our model we have:
+
+* $p-value: 1.41e-09$
+* adjusted $r^2 = .32$
+* AIC = 1016
+* BIC = 1029
+
+
+
+Since this model has the ***lowest AIC***, ***2nd lowest BIC***,  and ***highest adjusted $r^2$***, all terms have statistical significance, and the model has a $p-value: 1.41e-09$, we can conclude
+
+::: blue
+-   A school's percentage of students classified as
+    `Exceeding or Meeting` expectations on the Introductory Physics MCAS
+    is negatively associated with a school's variance in performance
+    relative to students in the state on `Mathematics and Data` items,
+    `SD MD Diff`, even when we control for impact of `School Size` on a school's percentage of students `Exceeding or Meeting` expectations on the Introductory Physics MCAS.
+:::
+
+
+
+```{r}
+
+fit_md_size_interact = lm(`EorM%` ~ (`MD Diff SD`  + `School Size` + `MD Diff SD`* `School Size`), data = HSPhy_NextGen_SchoolSum)
+summary(fit_md_size_interact)
+AIC(fit_md_size_interact)
+BIC(fit_md_size_interact)
+
+
+```
+
+
+## Diagnostic of Final Model, Fit 5: MD_WA_Size_interact
+
+When we consider our diagnostics, our model seems to satisfy the assumptions of:
+
+* Linearity
+* Normality of Errors
+
+* Homoskedasticity: there is a slight increase in our `Scale-Location` plot, but not very steep.
+
+
+Our model does have a few terms that violate Cook's distance. We have 112 and Cook's distance says the 4th, 47th, and 104th observations are in
+violation, since $\frac{4}{n} \approx .04$. 
+
+
+When we remove those observations, and fit a new model, we find all of our explanatory variables to continue to be statistically significant with `MD Diff SD`: $p =.0002$, `School Size`: $p = 0.001028$, and there is still a statistically significant, $p = 0.001462$, interaction effect between `MD Diff SD` and `School Size`.
+
+For our adjusted model we have:
+
+* $p-value: 1.027e-12$
+* adjusted $r^2 = .41$
+* AIC = 964
+* BIC = 978
+
+When we remove the outliers, the direction of our model and significance of our explanatory variables does not change.
+
+```{r}
+HSPhy_NextGen_SchoolSum
+plot(fit_md_size_interact, which = 1:6)
+cooks = 4/112
+cooks
+
+ test<-HSPhy_NextGen_SchoolSum%>%
+   filter(`School Code` != "00160505")%>%
+    filter(`School Code` != "01520505")%>%
+    filter(`School Code` != "08010605")
+
+
+ fit_md_size_interact_adj = lm(`EorM%` ~ (`MD Diff SD`  + `School Size` + `MD Diff SD`* `School Size`), data = test)
+summary(fit_md_size_interact_adj)
+AIC(fit_md_size_interact_adj)
+BIC(fit_md_size_interact_adj)
+
+
+
+```
+
+
+## Visuals MD + School Size vs. ERM%
+
+This image displays the association between `MD Diff SD` and `EorM%`. One can see that high variability in `Mathematics and Data` items is associated with lower Achievement for schools. Larger schools tend to perform better on the exam compared to smaller schools and have less variation in their mathematics performance.
+
+```{r}
+
+ggplot(data = HSPhy_NextGen_SchoolSum, aes(x = `MD Diff SD`, y = `EorM%`, color = `School Size`)) +
+  geom_point() +
+  geom_smooth(method="lm", se=T)+
+   labs( y = "EorM%",
+            title = "Variance in Mathematics vs. Student Achievement",
+            x = "MD Diff SD",
+            caption = "NextGen HS Physics MCAS")
+```
+
+
+```{r}
+
+
+# ggplot(data = HSPhy_NextGen_SchoolSum, aes(x = `MD Diff SD`, y = `EorM%`, color = `EM Perf Stat`)) +
+#   geom_point() +
+#   geom_smooth(method="lm", se=T)
+
+
+
+```
+
+
+
+# Hypothesis 2: Reporting Cateogy and School Performance
+
+```{=html}
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+```
+::: blue
+-   A school's summary performance on items in a given content
+    `Reporting Category` as measured by `MF%`, `EN%`, and `WA%`, is
+    positively associated with the `Reporting Category's` weight within the exam.
+:::
+
+
+## Fit 1: `Report_Cat_Weight`
+
+When we control for the variation in `School Size` and remove content reporting categories from our model,
+we have that `MD Diff SD`: $p =.001$ and `School Size`: $p = .006$ are both statistically significant and there is a statistically significant, $p = 003$, interaction effect between `MD Diff SD` and `School Size`. For our model we have:
+
+* $p-value: 1.41e-09$
+* adjusted $r^2 = 0.04382$
+* AIC = 2706
+* BIC = 2718
+
+```{r}
+HSPhy_NextGen_SchoolSum<-HSPhy_NextGen_SchoolSum%>%
+  mutate(`MF_Weight` = round(100*30/60))%>%
+  mutate(`EN_Weight` = round(100*18/60))%>%
+  mutate(`WA_Weight` = round(100*12/60))
+
+#HSPhy_NextGen_SchoolSum
+  
+
+ HSPhy_Weight<-HSPhy_NextGen_SchoolSum%>%
+  select(`MF_Weight`, `EN_Weight`, `WA_Weight`, `MD Diff SD`, `School Size`, `School Name`, `School Code`)%>%
+   pivot_longer(c(1:3), names_to = "Report Cat", values_to = "Exam Weigt") #%>%
+
+ HSPhy_Weight
+ 
+ HSPhy_Cat<-HSPhy_NextGen_SchoolSum%>%
+  select(`MF%`, `EN%`, `WA%`, `School Code`, `MD Diff SD`, `School Size`)%>%
+  pivot_longer(c(1:3), names_to = "Report Cat", values_to = "Report Cat%")%>%
+   group_by
+ 
+ HSPhy_Cat<-HSPhy_Cat%>%
+   mutate(Report_Cat_Weight = case_when(
+     `Report Cat` == "MF%" ~ 50,
+     `Report Cat` == "EN%" ~ 30,
+     `Report Cat` == "WA%" ~ 20,
+     
+   ))
+ 
+ HSPhy_Cat
+ 
+   # HSPhy_Weight<- HSPhy_Weight%>%
+   #   select(`School Name`, `School Code`, `Report Cat`, `Exam Weight`, `% Points`)%>%
+   #  group_by(`School Name`, `School Code`, `Report Cat`)%>%
+   # summarize(`Exam Weight` = mean(`Exam Weight`),
+   #           `Report Cat %` = mean(`% Points`))%>%
+   # ungroup()
+   # 
+
+fit_weight = lm(`Report Cat%` ~ `Report_Cat_Weight`, data = HSPhy_Cat)
+ 
+summary(fit_weight)
+AIC(fit_weight)
+BIC(fit_weight)
+
+
+
+  
+  
+```
+## Fit 2: `Report_Cat_Weight`, `MD Diff SD`
+
+When we control for the variation in `MD Diff SD`, 
+
+`Report_Cat_Weight`: $p =.03$ and `MD Diff SD`: $p = 1.88e-05$ are both statistically significant.For our model we have:
+
+* $p-value: 2.2e-16$
+* adjusted $r^2 = 0.37$
+* AIC = 2568
+* BIC = 2584
+
+```{r}
+
+
+fit_weight_md = lm(`Report Cat%` ~ `Report_Cat_Weight` + `MD Diff SD`, data = HSPhy_Cat)
+ 
+summary(fit_weight_md)
+AIC(fit_weight_md)
+BIC(fit_weight_md)
+
+
+
+  
+  
+```
+
+## Fit 3: `Report_Cat_Weight`, `MD Diff SD`, `School Size`
+
+When we control for the variation in `MD Diff SD`,
+we have that `Report_Cat_Weight`: $p =4.37e-07$ and `MD Diff SD`: $p = 4.10e-12$, and `School Size`: $p = 4.33e-06$ are statistically significant and there is a statistically significant, $p = 4.74e-07$, interaction effect between `MD Diff SD` and `School Size`. For our model we have:
+
+* $p-value: 2.2e-16$
+* adjusted $r^2 = 0.41$
+* AIC = 2546
+* BIC = 2569
+
+```{r}
+fit_weight_md_size = lm(`Report Cat%` ~ `Report_Cat_Weight` + `MD Diff SD` + `School Size` + `School Size`*`MD Diff SD`, data = HSPhy_Cat)
+ 
+summary(fit_weight_md_size)
+AIC(fit_weight_md_size)
+BIC(fit_weight_md_size)
+  
+```
+
+Since this model has the ***lowest AIC***, ***2nd lowest BIC***,  and ***highest adjusted $r^2$***, all terms, we can conclude
+
+::: blue
+-   A school's summary performance on items in a given content
+    `Reporting Category` as measured by `Report Cat%`, is
+    positively associated with the `Reporting Category's` weight within the exam.
+    `Report_Cat Weight` was statistically significant, even when we control for impact of `MD Diff SD` and`School Size`.
+:::
+
+## Diganostic of Fit3: fit_weight_md_size
+
+When we consider our diagnostics, our model seems to satisfy the assumptions of:
+
+* Linearity
+* Normality of Errors
+* Homoskedasticity: there is a slight increase in our `Scale-Location` plot, but not very steep.
+
+
+Our model does have some terms that violate Cook's distance. We have 336 observations and Cook's distance says the 141st, 310th, and 311th observations are in
+violation, since $\frac{4}{n} \approx .01$. 
+
+
+When we remove those observations, and fit a new model, we find all of our explanatory variables to continue to be statistically significant 
+
+For our adjusted model we have:
+
+* $p-value: 2.2e-16$
+* adjusted $r^2 = .49$
+* AIC = 2437
+* BIC = 2460
+
+When we remove the outliers, the direction of our model and significance of our explanatory variables does not change.
+
+```{r}
+HSPhy_Cat
+4/336
+plot(fit_weight_md_size, which = 1:6)
+
+ test<-HSPhy_Cat%>%
+   filter(`School Code` != "01520505")%>%
+    filter(`School Code` != "08010605")
+
+
+ fit_weight_md_size_adj = lm(`Report Cat%` ~ `Report_Cat_Weight` + `MD Diff SD` + `School Size` + `School Size`*`MD Diff SD`, data = test)
+summary(fit_weight_md_size_adj)
+AIC(fit_weight_md_size_adj)
+BIC(fit_weight_md_size_adj)
+
+```
+
+## Visualization of Fit3
+
+```{r}
+
+ggplot(data = HSPhy_Cat, aes(x = `MD Diff SD`, y = `Report Cat%`, color = `Report_Cat_Weight`)) +
+  geom_point() +
+  geom_smooth(method="lm", se=T)+
+   labs( y = "Report Cat%",
+            title = "Variance in Mathematics and Category Weight vs. Achievement",
+            x = "MD Diff SD",
+            caption = "NextGen HS Physics MCAS")
+```
+# Conclusion
+
+Mathematics, Mathematics, Mathematics
+
+# References
+
+
