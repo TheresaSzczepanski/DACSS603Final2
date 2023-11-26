@@ -67,7 +67,7 @@ that every teacher has access to high-quality, standards aligned
 instructional materials and receives relevant professional development
 to support their use of these materials [@IMPD21].
 
-All Massachusetts Public School students must complete a High School
+All Massachusetts Public School students must complete a high school
 science MCAS exam providing a wealth of standardized data on students'
 discipline specific skill development. All schools receive annual
 summary reports on student performance. Significant work has been done
@@ -139,8 +139,8 @@ which consist of information from three broad categories
     the size of the school, `School Size`, as determined by the number
     of students that completed the MCAS exam.
 
--   *Discipline-Specifc Performance Metrics*: This includes the
-    percentage of points earned by students at a school for items each
+-   *Discipline-Specific Performance Metrics*: This includes the
+    percentage of points earned by students at a school for items in each
     content `Reporting Category`, `MF%`, `EN%`, `WA%` and science
     `Practice Category` `ERM%`, `MD%`, `IQ%`, the difference between a
     school's percentage of points earned compared to the percentage of
@@ -157,7 +157,7 @@ which consist of information from three broad categories
     Expectations), the difference between these percentages and the
     percentage of students in Massachusetts at each performance level
     (`EDiff`, `MDiff`, `PMDiff`, `NMDiff`), and an ordinal
-    classification of school's, `EM Perf Stat` based on the percentage
+    classification of schools, `EM Perf Stat`, based on the percentage
     of students that were classified as Exceeding or Meeting
     expectations on the exam (`HighEM`, `HighM`, `Mid`, `Mid-Low`,
     `Low`).
@@ -173,7 +173,7 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 </style>
 ```
 ::: blue
--   A school's percentage of students classified as `Exceeding`
+-   A school's percentage of students classified as `Exceeding` or `Meeting`
     expectations on the Introductory Physics MCAS is negatively
     associated with a school's variance in performance relative to
     students in the state on `Mathematics and Data` items, `SD MD Diff`.

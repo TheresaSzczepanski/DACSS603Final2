@@ -12,6 +12,7 @@ editor:
   markdown: 
     wrap: 72
 ---
+
 ```{r}
 
 #source('dependencies.R')
@@ -25,52 +26,65 @@ and Secondary Education's
 
 ***This Needs to be Updated***, right now it is incomplete!
 
-| variable               | Measurement Level | Values                                                                                                                                         |
-|------------------|------------------|------------------------------------|
-| `Tested Students`     | Discrete           | number of students from a school that completed the MCAS assessment                                                                                                                 |
-| `School Size`     | Ordinal           | classification of size of school based on number of students that completed the HS Physics MCAS exam                                                                                                                 |
-|                        |                   | `Small`: 50 or less students                                                                                                                              |
-|                        |                   | `Medium`: 50-150                                                                                                                                         |
-|                        |                   | `Large`: More than 150
-| `Practice Category Diff`   | Discrete           | The number of points available for items in a given scientific practice category                                                                                                                       |
-|                        |                   | `EVR Pts`: Evidence, Reasoning, and Modeling                                                                                                                              |
-|                        |                   | `MD Pts`: Mathematics and Data                                                                                                                                         |
-|                        |                   | `IQ Pts`: Investigations and Questioning                                                                                                                                        |
-| `Reporting Category Pts`   | Discrete           | The number of points available for items in a given content area                                                                                                                       |
-|                        |                   | `MF Pts`: Motion and Forces                                                                                                                              |
-|                        |                   | `WA Pts`: Waves                                                                                                                                         |
-|                        |                   | `EN Pts`: Energy                                                                                                                                        |
-| `School Percent Points`    | Continuous        | Percent of points earned by Students at a school for all items in a given category                                                                           |
-|                        |                   | `MF% Pts`: Motion and Forces                                                                                                                              |
-|                        |                   | `WA% Pts`: Waves                                                                                                                                         |
-|                        |                   | `EN% Pts`: Energy                                                                                                                                        |
-|                        |                   | `EVR% Pts`: Evidence, Reasoning, and Modeling                                                                                                                              |
-|                        |                   | `MD% Pts`: Mathematics and Data                                                                                                                                         |
-|                        |                   | `IQ% Pts`: Investigations and Questioning                                                                                                                                        |
-| `School-State Diff`        | Discrete          | Difference between percent of points earned by given school's students and points earned by students in MA for a given category.                              |
-|                        |                   | `MF Diff`: Motion and Forces                                                                                                                              |
-|                        |                   | `WA Diff`: Waves                                                                                                                                         |
-|                        |                   | `EN Diff`: Energy                                                                                                                                        |
-|                        |                   | `EVR Diff`: Evidence, Reasoning, and Modeling                                                                                                                              |
-|                        |                   | `MD Diff`: Mathematics and Data                                                                                                                                         |
-|                        |                   | `IQ Diff`: Investigations and Questioning                                                                                                                                        |
-| `Performance Level Count`| Discrete           | The number of student's at a school at each [performance level](https://www.doe.mass.edu/mcas/tdd/pld/)                                                                      |
-|                        |                   | `E Count`: Exceeds Expectations                                                                                                                           |
-|                        |                   | `M Count`: Meets Expectations                                                                                                                             |
-|                        |                   | `PM Count`: Partially Meets Expectations                                                                                                                   |
-|                        |                   | `NM Count` Does Not Meet Expectations                                                                                                                     |
-| `Performance Level %`| Discrete           | The percent of student's at a school at each [performance level](https://www.doe.mass.edu/mcas/tdd/pld/)                                                                      |
-|                        |                   | `E%`: Exceeds Expectations                                                                                                                           |
-|                        |                   | `M%`: Meets Expectations                                                                                                                             |
-|                        |                   | `PM%`: Partially Meets Expectations                                                                                                                   |
-|                        |                   | `NM%` Does Not Meet Expectations                                                                                                                     |
-| `State Performance Level %`| Discrete           | The percent of student's in MA at each [performance level](https://www.doe.mass.edu/mcas/tdd/pld/)                                                                      |
-|                        |                   | `State E%`: Exceeds Expectations                                                                                                                           |
-|                        |                   | `State M%`: Meets Expectations                                                                                                                             |
-|                        |                   | `State PM%`: Partially Meets Expectations                                                                                                                   |
-|                        |                   | `State NM%` Does Not Meet Expectations                                                                                                                     |
-| `Avg. Scaled Score`   | Discrete          | The [school's average scaled score](https://www.doe.mass.edu/mcas/parents/pgreport/ghs-english.pdf)  |
-| `State Avg. Scaled Score`| Discrete        | The [average scaled score across all students in MA](https://www.doe.mass.edu/mcas/growth/default.html)        |
-| `School Code`               | Nominal     | the 8 digit identifier code for a school                                                                 |
-| `School Name`               | Nominal     | the name of a school                                                                 |
-
+| variable                    | Measurement Level | Values                                                                                                                           |
+|-------------------|-------------------|------------------------------------|
+| `Tested Students`           | Discrete          | number of students from a school that completed the MCAS assessment                                                              |
+| `School Size`               | Discrete           | classification of size of school based on number of students that completed the HS Physics MCAS exam                             |
+|                             |                   | `1`: 1st quartile                                                                                                     |
+|                             |                   | `2`: 2nd quartile                                                                                                                 |
+|                             |                   | `3`: 3rd quartile                                                                                                          |
+|                             |                   | `4`: 4th quartile                                                                                                          |
+| `Practice Category Diff`    | Discrete          | The number of points available for items in a given scientific practice category                                                 |
+|                             |                   | `EVR Pts`: Evidence, Reasoning, and Modeling                                                                                     |
+|                             |                   | `MD Pts`: Mathematics and Data                                                                                                   |
+|                             |                   | `IQ Pts`: Investigations and Questioning                                                                                         |
+| `Reporting Category Pts`    | Discrete          | The number of points available for items in a given content area                                                                 |
+|                             |                   | `MF Pts`: Motion and Forces                                                                                                      |
+|                             |                   | `WA Pts`: Waves                                                                                                                  |
+|                             |                   | `EN Pts`: Energy                                                                                                                 |
+| `School Percent Points`     | Continuous        | Percent of points earned by Students at a school for all items in a given category                                               |
+|                             |                   | `MF%`: Motion and Forces                                                                                                     |
+|                             |                   | `WA%`: Waves                                                                                                                 |
+|                             |                   | `EN%`: Energy                                                                                                                |
+|                             |                   | `EVR%`: Evidence, Reasoning, and Modeling                                                                                    |
+|                             |                   | `MD%`: Mathematics and Data                                                                                                  |
+|                             |                   | `IQ%`: Investigations and Questioning                                                                                        |
+| `School-State Diff SD`         | Discrete          | Standard Deviation of the Difference between percent of points earned by given school's students and points earned by students in MA for all items in a given category. |
+|                             |                   | `MF Diff SD`: Motion and Forces                                                                                                     |
+|                             |                   | `WA Diff SD`: Waves                                                                                                                 |
+|                             |                   | `EN Diff SD`: Energy                                                                                                                |
+|                             |                   | `EVR Diff SD`: Evidence, Reasoning, and Modeling                                                                                    |
+|                             |                   | `MD Diff SD`: Mathematics and Data                                                                                                  |
+|                             |                   | `IQ Diff SD`: Investigations and Questioning                                                                                        |
+| `School-State Diff`         | Discrete          | Difference between percent of points earned by given school's students and points earned by students in MA for a given category. |
+|                             |                   | `MF Diff`: Motion and Forces                                                                                                     |
+|                             |                   | `WA Diff`: Waves                                                                                                                 |
+|                             |                   | `EN Diff`: Energy                                                                                                                |
+|                             |                   | `EVR Diff`: Evidence, Reasoning, and Modeling                                                                                    |
+|                             |                   | `MD Diff`: Mathematics and Data                                                                                                  |
+|                             |                   | `IQ Diff`: Investigations and Questioning                                                                                        |
+| `Performance Level Count`   | Discrete          | The number of student's at a school at each [performance level](https://www.doe.mass.edu/mcas/tdd/pld/)                          |
+|                             |                   | `E Count`: Exceeds Expectations                                                                                                  |
+|                             |                   | `M Count`: Meets Expectations                                                                                                    |
+|                             |                   | `PM Count`: Partially Meets Expectations                                                                                         |
+|                             |                   | `NM Count` Does Not Meet Expectations                                                                                            |
+| `Performance Level %`       | Discrete          | The percent of student's at a school at each [performance level](https://www.doe.mass.edu/mcas/tdd/pld/)                         |
+|                             |                   | `E%`: Exceeds Expectations                                                                                                       |
+|                             |                   | `M%`: Meets Expectations                                                                                                         |
+|                             |                   | `PM%`: Partially Meets Expectations                                                                                              |
+|                             |                   | `NM%` Does Not Meet Expectations                                                                                                 |
+| `EM Perf Stat` | Ordinal          | Based on percentage of students classified as `Exceeding or Meeting` expectations                              |
+|                             |                   | `HighEM`: Exceeds Expectations                                                                                                 |
+|                             |                   | `HighM`: Meets Expectations                                                                                                   |
+|                             |                   | `Mid`: $-14<$ `EorM Diff` $< 0$                                                                                       |
+|                             |                   | `Mid-Low`: $-33<$ `EorM Diff` $<-14$                                                                                            |
+|                             |                   | `Low`: `EorM Diff` $<-33$                                                                                           |
+| `State Performance Level %` | Discrete          | The percent of student's in MA at each [performance level](https://www.doe.mass.edu/mcas/tdd/pld/)                               |
+|                             |                   | `State E%`: Exceeds Expectations                                                                                                 |
+|                             |                   | `State M%`: Meets Expectations                                                                                                   |
+|                             |                   | `State PM%`: Partially Meets Expectations                                                                                        |
+|                             |                   | `State NM%` Does Not Meet Expectations                                                                                           |
+| `Avg. Scaled Score`         | Discrete          | The [school's average scaled score](https://www.doe.mass.edu/mcas/parents/pgreport/ghs-english.pdf)                              |
+| `State Avg. Scaled Score`   | Discrete          | The [average scaled score across all students in MA](https://www.doe.mass.edu/mcas/growth/default.html)                          |
+| `School Code`               | Nominal           | the 8 digit identifier code for a school                                                                                         |
+| `School Name`               | Nominal           | the name of a school                                                                                                             |
