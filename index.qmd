@@ -99,6 +99,7 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
     improve student achievement?
 :::
 
+
 In this report, I will analyze the High School Introductory Physics Next
 Generation [Massachusetts Comprehensive Assessment System
 (MCAS)](https://www.doe.mass.edu/mcas/default.html) tests results for
@@ -221,13 +222,13 @@ HSPhy_SchoolSize <- rbind(HSPhy_2023_SchoolSizeDF, HSPhy_2022_SchoolSizeDF)%>%
 quantile <- quantile(HSPhy_SchoolSize$`Tested Count`)
 HSPhy_Size<-HSPhy_SchoolSize%>%
   mutate(`School Size` = case_when(
-    `Tested Count` <= quantile[2] ~ 0, # small
+    `Tested Count` <= quantile[2] ~ 1, # small
     `Tested Count` > quantile[2] &
-      `Tested Count` <= quantile[3] ~ 1, #Low-Mid
+      `Tested Count` <= quantile[3] ~ 2, #Low-Mid
     `Tested Count` > quantile[3] &
-      `Tested Count` <= quantile[4] ~ 2, #Upper Mid
+      `Tested Count` <= quantile[4] ~ 3, #Upper Mid
     `Tested Count` > quantile[4] &
-      `Tested Count` <= quantile[5] ~ 3, # Large
+      `Tested Count` <= quantile[5] ~ 4, # Large
   ))%>%
   # mutate(`School Size` = recode_factor(`School Size`,
   #                                           "Small" = "Small",
@@ -315,7 +316,7 @@ HSPhy_NextGen_SchoolSum%>%
     summarise( `Mean MD%` = mean(`MD%`), 
               `Mean MD SD` = mean(`MD Diff SD`),
               `Mean ERM%` = mean(`ERM%`),
-               `Mean ERM SD` = mean (`ERM Diff SD`))
+               `Mean ERM SD` = mean(`ERM Diff SD`))
 
 
 HSPhy_NextGen_SchoolSum%>%
@@ -426,11 +427,11 @@ the right.
 
 ## Mathematics and Data vs. Evidence Reasoning and Modeling (Practice Category)
 
-These images, seem to suggest that schools with the **highest**
-percentage of students classified as `Exceeding` expectations on the
-MCAS have the **lowest** levels of variation in performance on
+These images seem to suggest that schools with the **highest**
+percentage of students classified as `Exceeding or Meeting` expectations on the
+MCAS have **lower** levels of variation in performance on
 `Mathematics and Data` Items and schools with the **lowest** percentage
-of students classified as `Exceeding` expectations on the MCAS have the
+of students classified as `Exceeding or Meeting` expectations on the MCAS have the
 **highest** levels of variation in performance on
 `Mathematics and Data Items`.
 
@@ -483,7 +484,7 @@ HSPhy_NextGen_SchoolSum%>%
   facet_wrap(~`EM Perf Stat`)
 ```
 
-These images, seem to suggest that students at all schools seem to have
+These images seem to suggest that students at all schools seem to have
 more difficulty with `Mathematics and Data` items as compared to
 `Evidence, Reasoning, and Modeling Items`.
 
@@ -679,7 +680,7 @@ To explore the relationship between the variance in a schools' `Diff`
 compared to the state on Mathematics and Data items, `MD Diff SD` and a
 school's percentage of students meeting or exceeding expectations on the
 MCAS, `EorM%`, we also will considered the impact
-of `School Size`, `0`: Smallest, `3`: Largest schools, as a control. It appears from our visuals that
+of `School Size`, `1`: Smallest, `4`: Largest schools, as a control. It appears from our visuals that
 `Small` schools have a higher variation in mathematics and data items
 smaller school's typically perform worse on Mathematics and Data and overall on the
 MCAS compared to larger schools.
@@ -816,26 +817,26 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 
 I fit several models with `EorM%` as the response variable and `MD Diff SD` as the key explanatory variable.
 
-Then, I will consider controlling for the following:
+I considered additional explanatory vairables to control for the following:
 
 Control for the variability in the other largest Science Practice Category, `Evidence, Reasoning, and Modeling`
-* Explanatory: `ERM Diff SD`
+
+* Explanatory 2: `ERM Diff SD`
 
 Control for School Size
 
-* `School Size`
-* Explanatory: `School Size`
+* Explanatory 3: `School Size`
 
 Control for the variability in the other content Reporting Categories: `Waves`, `Motion and Forces`, and `Energy`
 
-*  Explanatory: `WA Diff SD`
-*  Explanatory: `MF Diff SD`
-*  Explanatory: `EN Diff SD`
+*  Explanatory 4: `WA Diff SD`
+*  Explanatory 5: `MF Diff SD`
+*  Explanatory 6: `EN Diff SD`
 
 
 ## Fit 1: Explanatory: `MD Diff SD`
 
-When we consider `MD Diff SD` without controlling for other variables, we have
+When we consider `MD Diff SD` without controlling for other variables, our model associates a $-3.9674$ drop in `EorM%` for a 1 point increase in `MD Diff SD`, $p = 2.73e-09$.
 
 * $p-value: 2.726e-09$
 * adjusted $r^2 = .27$
@@ -852,7 +853,7 @@ BIC(fit_md)
 ## Fit 2: Explanatory: `MD Diff SD` + `ERM Diff SD`
 
 When we control for the variation in the other Science Practice Category, `Evidence Reasoning, and Modeling`, 
-`ERM Diff SD` is not significant and does not have a significant interaction with `MD Diff SD`
+`ERM Diff SD` is not significant and does not have a significant interaction with `MD Diff SD`.
 
 ```{r}
 fit_md_erm = lm(`EorM%` ~ (`MD Diff SD` + `ERM Diff SD`), data = HSPhy_NextGen_SchoolSum)
@@ -865,14 +866,13 @@ summary(fit_md_erm_interact)
 ```
 ## Fit 3: Explanatory: `MD Diff SD` + `WA Diff SD`
 
-When we control for the variation in the Content Reporting Category, `Waves`: `WA Diff SD`
+When we control for the variation in the Content Reporting Category, `Waves`: `WA Diff SD`, without considering interaction, there is not a statistical significance 
+to `WA Diff SD`. 
 
+However, when we include the interaction between `WA Diff SD` and `MD Diff SD`,
+we have that `MD Diff SD` is still statistically significant with an increase in `MD Diff SD` associated with a $-10.02$ decrease in `EorM%`.
 
-`Motion and Forces`: `MD SD Diff`, 
-`Energy`: `EN Diff SD`, and `Waves`: `WA Diff SD`, without considering interaction, there is not a statistical significance 
-to `WA Diff SD`. However, when we include the interaction between `WA Diff SD` and `MD Diff SD`
-
-we have that `MD Diff SD` is still statistically significant and there is a statistically significant, $p = 039$ interaction effect between `WA Diff SD` and `MD Diff SD`. For our model we have:
+There is a statistically significant, $p = 039$ interaction effect between `WA Diff SD` and `MD Diff SD`. For our model we have:
 
 * $p-value: 2.726e-09$
 * adjusted $r^2 = .28$
@@ -891,6 +891,8 @@ BIC(fit_md_wa_interact)
 
 ```
 
+## Fit 3 b): Explanatory: `MD Diff SD`, `WA Diff SD`, `MD Diff SD`
+
 When we consider adding a second content reporting category, `Motion and Forces`, only `MD Diff SD` is statistically significant. So we will control for content with just one reporting category, `Waves`.
 
 ```{r}
@@ -900,105 +902,118 @@ summary(fit_md_wa_mf)
 ```
 ## Fit 4: Explanatory: `MD Diff SD` + `WA Diff SD`, `School Size`
 
-When we add the explanatory variable `School Size` to our model, `WA Diff SD` no longer has a statistically significant interaction with `MD Diff SD`.
+When we add the explanatory variable `School Size` to our model, `WA Diff SD` no longer has a statistically significant interaction with `MD Diff SD`. The only statistical significant explanatory variable is `MD Diff SD`.
+
+
+- A 1 point increase in `MD Diff SD` is associated with a $ -9.5141$ decrease in `EorM%`, $p = .0008$
+
 
 ```{r}
 
 fit_md_wa_size = lm(`EorM%` ~ (`MD Diff SD` + `WA Diff SD` +  `MD Diff SD`*`WA Diff SD` + `School Size`), data = HSPhy_NextGen_SchoolSum)
 summary(fit_md_wa_size)
 
-
-fit_md_size_interact = lm(`EorM%` ~ (`MD Diff SD`  + `School Size` + `MD Diff SD`* `School Size`), data = HSPhy_NextGen_SchoolSum)
-summary(fit_md_size_interact)
-
-
-fit_md_size_interact = lm(`EorM%` ~ (`MD Diff SD` + `School Size` + `WA Diff SD` + `WA Diff SD`*`MD Diff SD` +  `MD Diff SD` * `School Size`), data = HSPhy_NextGen_SchoolSum)
-summary(fit_md_size_interact)
-
 ```
 ## Fit 5: Explanatory: `MD Diff SD`  `School Size`
 
-When we control for the variation in `School Size` and remove content reporting categories from our model,
-we have that `MD Diff SD`: $p =.001$ and `School Size`: $p = .006$ are both statistically significant and there is a statistically significant, $p = 003$, interaction effect between `MD Diff SD` and `School Size`. For our model we have:
+When we control for the variation in `School Size` and remove content reporting categories from our model, we have that
+
+
+- A 1 point increase in `MD Diff SD` is associated with a $-3.79$ decrease in `EorM%`, $p = .0008$
+
+-`School Size` is not statistically significant
 
 * $p-value: 1.41e-09$
-* adjusted $r^2 = .32$
-* AIC = 1016
-* BIC = 1029
+* adjusted $r^2 = .26$
+* AIC = 1023
+* BIC = 1034
 
+```{r}
 
+fit_md_size = lm(`EorM%` ~ (`MD Diff SD` + `School Size`), data = HSPhy_NextGen_SchoolSum)
+summary(fit_md_size)
+AIC(fit_md_size)
+BIC(fit_md_size)
 
-Since this model has the ***lowest AIC***, ***2nd lowest BIC***,  and ***highest adjusted $r^2$***, all terms have statistical significance, and the model has a $p-value: 1.41e-09$, we can conclude
+```
+
+## Result of Test
+
+Since our original model, `fit_md`, has the ***2nd lowest AIC***, ***lowest BIC***,  and ***highest adjusted $r^2$***, and all other models had `MD Diff SD` with negative coefficients and having statistical significance, even when including controls, we can conclude
 
 ::: blue
 -   A school's percentage of students classified as
     `Exceeding or Meeting` expectations on the Introductory Physics MCAS
     is negatively associated with a school's variance in performance
     relative to students in the state on `Mathematics and Data` items,
-    `SD MD Diff`, even when we control for impact of `School Size` on a school's percentage of students `Exceeding or Meeting` expectations on the Introductory Physics MCAS.
+    `SD MD Diff`, on a school's percentage of students `Exceeding or Meeting` expectations on the Introductory Physics MCAS.
 :::
 
 
 
 ```{r}
 
-fit_md_size_interact = lm(`EorM%` ~ (`MD Diff SD`  + `School Size` + `MD Diff SD`* `School Size`), data = HSPhy_NextGen_SchoolSum)
-summary(fit_md_size_interact)
-AIC(fit_md_size_interact)
-BIC(fit_md_size_interact)
+fit_md_size = lm(`EorM%` ~ (`MD Diff SD`  + `School Size` + `School Size`* `MD Diff SD`), data = HSPhy_NextGen_SchoolSum)
+summary(fit_md_size)
+AIC(fit_md_size)
+BIC(fit_md_size)
 
 
 ```
 
 
-## Diagnostic of Final Model, Fit 5: MD_WA_Size_interact
+## Diagnostic of Final Model, Fit 1: fit_md
 
 When we consider our diagnostics, our model seems to satisfy the assumptions of:
 
-* Linearity
-* Normality of Errors
+* Linearity: our residuals plot appears to have a few outliers and a slighlty negative slope
 
-* Homoskedasticity: there is a slight increase in our `Scale-Location` plot, but not very steep.
+* Normality of Errors: our standardized residuals seem to fall on the QQ line.
+
+* Homoskedasticity: there is a slight increase in our Scale-Location plot, but not very steep.
 
 
-Our model does have a few terms that violate Cook's distance. We have 112 and Cook's distance says the 4th, 47th, and 104th observations are in
+Our model does have a few terms that violate Cook's distance. We have 112 and Cook's distance says the 30th, 33rd, and 104th observations are in
 violation, since $\frac{4}{n} \approx .04$. 
 
 
-When we remove those observations, and fit a new model, we find all of our explanatory variables to continue to be statistically significant with `MD Diff SD`: $p =.0002$, `School Size`: $p = 0.001028$, and there is still a statistically significant, $p = 0.001462$, interaction effect between `MD Diff SD` and `School Size`.
+Furthermore, when we remove those observations, and fit a new model, we find continue to be statistically significant with a 1 point increase in `MD Diff SD`: $p =6.62e-12$ associated with $-4.8152$ decrease in `EorM%`. 
 
 For our adjusted model we have:
 
-* $p-value: 1.027e-12$
-* adjusted $r^2 = .41$
-* AIC = 964
-* BIC = 978
+* $p-value: 6.62e-12$
+* adjusted $r^2 = .35$
+* AIC = 974
+* BIC = 982
 
 When we remove the outliers, the direction of our model and significance of our explanatory variables does not change.
 
 ```{r}
-HSPhy_NextGen_SchoolSum
-plot(fit_md_size_interact, which = 1:6)
+#HSPhy_NextGen_SchoolSum
+plot(fit_md, which = 1:6)
 cooks = 4/112
 cooks
 
  test<-HSPhy_NextGen_SchoolSum%>%
-   filter(`School Code` != "00160505")%>%
-    filter(`School Code` != "01520505")%>%
+   filter(`School Code` != "00610021")%>%
+    filter(`School Code` != "00860505")%>%
     filter(`School Code` != "08010605")
 
 
- fit_md_size_interact_adj = lm(`EorM%` ~ (`MD Diff SD`  + `School Size` + `MD Diff SD`* `School Size`), data = test)
-summary(fit_md_size_interact_adj)
-AIC(fit_md_size_interact_adj)
-BIC(fit_md_size_interact_adj)
+ fit_md_adj = lm(`EorM%` ~ (`MD Diff SD`), data = test)
+summary(fit_md_adj)
+AIC(fit_md_adj)
+BIC(fit_md_adj)
 
 
 
 ```
+```{r}
+#plot(fit_md_adj, which = 1:6)
 
+```
 
-## Visuals MD + School Size vs. ERM%
+## Visuals MD and School Size vs. ERM%
 
 This image displays the association between `MD Diff SD` and `EorM%`. One can see that high variability in `Mathematics and Data` items is associated with lower Achievement for schools. Larger schools tend to perform better on the exam compared to smaller schools and have less variation in their mathematics performance.
 
@@ -1018,7 +1033,7 @@ ggplot(data = HSPhy_NextGen_SchoolSum, aes(x = `MD Diff SD`, y = `EorM%`, color 
 
 
 # ggplot(data = HSPhy_NextGen_SchoolSum, aes(x = `MD Diff SD`, y = `EorM%`, color = `EM Perf Stat`)) +
-#   geom_point() +
+ #  geom_point() +
 #   geom_smooth(method="lm", se=T)
 
 
@@ -1041,14 +1056,13 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 :::
 
 
-## Fit 1: `Report_Cat_Weight`
+## Fit 1: Explanatory:`Report_Cat_Weight`
 
-When we control for the variation in `School Size` and remove content reporting categories from our model,
-we have that `MD Diff SD`: $p =.001$ and `School Size`: $p = .006$ are both statistically significant and there is a statistically significant, $p = 003$, interaction effect between `MD Diff SD` and `School Size`. For our model we have:
+When we consider `Report_Cat_Weight` without controlling for other variables, our model associates a $.24$ point increase in `Report Cat%` for each 1 point increase in `Report_Cat_Weight`, $p = 6.54e-05$.
 
-* $p-value: 1.41e-09$
+* $p-value: 6.537e-05$
 * adjusted $r^2 = 0.04382$
-* AIC = 2706
+* AIC = 2707
 * BIC = 2718
 
 ```{r}
@@ -1064,7 +1078,7 @@ HSPhy_NextGen_SchoolSum<-HSPhy_NextGen_SchoolSum%>%
   select(`MF_Weight`, `EN_Weight`, `WA_Weight`, `MD Diff SD`, `School Size`, `School Name`, `School Code`)%>%
    pivot_longer(c(1:3), names_to = "Report Cat", values_to = "Exam Weigt") #%>%
 
- HSPhy_Weight
+ #HSPhy_Weight
  
  HSPhy_Cat<-HSPhy_NextGen_SchoolSum%>%
   select(`MF%`, `EN%`, `WA%`, `School Code`, `MD Diff SD`, `School Size`)%>%
@@ -1079,7 +1093,7 @@ HSPhy_NextGen_SchoolSum<-HSPhy_NextGen_SchoolSum%>%
      
    ))
  
- HSPhy_Cat
+ #HSPhy_Cat
  
    # HSPhy_Weight<- HSPhy_Weight%>%
    #   select(`School Name`, `School Code`, `Report Cat`, `Exam Weight`, `% Points`)%>%
@@ -1089,6 +1103,7 @@ HSPhy_NextGen_SchoolSum<-HSPhy_NextGen_SchoolSum%>%
    # ungroup()
    # 
 
+ #HSPhy_Cat
 fit_weight = lm(`Report Cat%` ~ `Report_Cat_Weight`, data = HSPhy_Cat)
  
 summary(fit_weight)
@@ -1102,9 +1117,13 @@ BIC(fit_weight)
 ```
 ## Fit 2: `Report_Cat_Weight`, `MD Diff SD`
 
-When we control for the variation in `MD Diff SD`, 
+When we control for the variation in the Science Practice Category, `Mathematics and Data`: `MD Diff SD`, 
 
-`Report_Cat_Weight`: $p =.03$ and `MD Diff SD`: $p = 1.88e-05$ are both statistically significant.For our model we have:
+- An increase in `Report_Cat_Weight`: $1.05e-06$ is associated with a $.24$ increase in `Report Cat%`
+
+- An increase in `MD Diff SD`: $p < 2e-16$ is associated with a $-2.25$ decrease in `Report Cat%`. 
+
+For our model we have:
 
 * $p-value: 2.2e-16$
 * adjusted $r^2 = 0.37$
@@ -1128,8 +1147,14 @@ BIC(fit_weight_md)
 
 ## Fit 3: `Report_Cat_Weight`, `MD Diff SD`, `School Size`
 
-When we control for the variation in `MD Diff SD`,
-we have that `Report_Cat_Weight`: $p =4.37e-07$ and `MD Diff SD`: $p = 4.10e-12$, and `School Size`: $p = 4.33e-06$ are statistically significant and there is a statistically significant, $p = 4.74e-07$, interaction effect between `MD Diff SD` and `School Size`. For our model we have:
+When we control for the variation in `MD Diff SD` and `School Size`,
+we have that `Report_Cat_Weight`: $p =4.37e-07$,  `MD Diff SD`: $p = 0.0318$, and `School Size`: $p = 4.33e-06$ are statistically significant and there is a statistically significant, $p = 4.74e-07$, interaction effect between `MD Diff SD` and `School Size`. 
+
+For our model we have:
+
+- an increase in `Report_Cat_Weight` is associated with a $.24$ increase in `Report Cat%`
+
+- E(`Report Cat%`) = 48.29 +  6.83 * `School Size` - .77* `MD Diff SD` - .98(`MD Diff SD` * `School Size`)
 
 * $p-value: 2.2e-16$
 * adjusted $r^2 = 0.41$
@@ -1145,7 +1170,9 @@ BIC(fit_weight_md_size)
   
 ```
 
-Since this model has the ***lowest AIC***, ***2nd lowest BIC***,  and ***highest adjusted $r^2$***, all terms, we can conclude
+## Result of Test
+
+Since this model has the ***lowest AIC***, ***lowest BIC***, ***highest adjusted $r^2$***, and all terms are statistically significant, we can conclude
 
 ::: blue
 -   A school's summary performance on items in a given content
@@ -1154,13 +1181,17 @@ Since this model has the ***lowest AIC***, ***2nd lowest BIC***,  and ***highest
     `Report_Cat Weight` was statistically significant, even when we control for impact of `MD Diff SD` and`School Size`.
 :::
 
-## Diganostic of Fit3: fit_weight_md_size
+It should be noted, that there was a very large increase from $.04$, to $.37$ in $r^2$ once we added `MD Diff SD` as an explanatory variable to our model.
+
+## Diganostic of Fit3: `fit_weight_md_size`
 
 When we consider our diagnostics, our model seems to satisfy the assumptions of:
 
-* Linearity
-* Normality of Errors
-* Homoskedasticity: there is a slight increase in our `Scale-Location` plot, but not very steep.
+* Linearity: our residuals plot appears to have a few outliers with the remaining values forming a horizontal band around the 0 line.
+
+* Normality of Errors: Our standardized residual points generally fall along the QQ line.
+
+* Homoskedasticity: there is a slight increase in our Scale-Location plot, but not very steep.
 
 
 Our model does have some terms that violate Cook's distance. We have 336 observations and Cook's distance says the 141st, 310th, and 311th observations are in
@@ -1176,10 +1207,10 @@ For our adjusted model we have:
 * AIC = 2437
 * BIC = 2460
 
-When we remove the outliers, the direction of our model and significance of our explanatory variables does not change.
+When we remove the outliers, the direction of our model, significance of our explanatory variables, and signs of their coefficients do not change.
 
 ```{r}
-HSPhy_Cat
+#HSPhy_Cat
 4/336
 plot(fit_weight_md_size, which = 1:6)
 
@@ -1195,7 +1226,7 @@ BIC(fit_weight_md_size_adj)
 
 ```
 
-## Visualization of Fit3
+## Visualization of Fit 3: `Report_Cat_Weight`, `MD Diff SD`, `School Size`
 
 ```{r}
 
@@ -1205,11 +1236,62 @@ ggplot(data = HSPhy_Cat, aes(x = `MD Diff SD`, y = `Report Cat%`, color = `Repor
    labs( y = "Report Cat%",
             title = "Variance in Mathematics and Category Weight vs. Achievement",
             x = "MD Diff SD",
-            caption = "NextGen HS Physics MCAS")
+            caption = "NextGen HS Physics MCAS")#+
+  #facet_wrap(~`Report_Cat_Weight`, scales = "free")
+```
+
+
+```{r}
+
+# ggplot(data = HSPhy_Cat, aes(x = `MD Diff SD`, y = `Report Cat%`, color = `School Size`)) +
+#   geom_point() +
+#   geom_smooth(method="lm", se=T)+
+#    labs( y = "Report Cat%",
+#             title = "Variance in Mathematics and School Size vs. Achievement",
+#             x = "MD Diff SD",
+#             caption = "NextGen HS Physics MCAS")+
+#   facet_wrap(~`Report_Cat_Weight`, scales = "free")
+```
+
+
+```{r}
+
+# ggplot(data = HSPhy_Cat, aes(x = `MD Diff SD`, y = `Report Cat%`, color = `Report_Cat_Weight`)) +
+#   geom_point() +
+#   geom_smooth(method="lm", se=T)+
+#    labs( y = "Report Cat%",
+#             title = "Variance in Mathematics and Category Weight vs. Achievement",
+#             x = "MD Diff SD",
+#             caption = "NextGen HS Physics MCAS")+
+#   facet_wrap(~`Report_Cat_Weight`, scales = "free")
+```
+
+```{r}
+
+ggplot(data = HSPhy_Cat, aes(x = `MD Diff SD`, y = `Report Cat%`, color = `School Size`)) +
+  geom_point() +
+  geom_smooth(method="lm", se=T)+
+   labs( y = "Report Cat%",
+            title = "MD SD Diff, Category Weight, and School Size vs. Achievement",
+            x = "MD Diff SD",
+            caption = "NextGen HS Physics MCAS")+
+  facet_wrap(~`Report_Cat_Weight`, scales = "free")
 ```
 # Conclusion
 
-Mathematics, Mathematics, Mathematics
+When considering the performance of Massachusetts students on the Next Generation High School Introductory Physics Exam, we find that:
+
+1. Student performance as measured by `Reporting Cat%` and `EorM%` were negatively associated with increased variability in `Mathematics and Data`, `MD Diff SD`.
+
+This suggests that schools could benefit by spending time reviewing and supporting science teachers in implementing evidence based, best practices for the teaching of Mathematics within the Physics classroom.
+
+2. Student performance as measured by `Reporting Cat%` was positively associated with the `Report_Cat_Weight`.
+
+This suggests that schools could benefit by creating a scope and sequence for the calendar year that ensures that all content areas from the Massachusetts Curriculum framework are addressed within the academic year. There seems to be evidence to suggest that the items in the `Waves` category are not receiving enough instructional time within the school year as compared to those in the highest weighted `Motion and Forces` category.
+
+
+
+
 
 # References
 
