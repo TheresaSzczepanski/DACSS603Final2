@@ -29,10 +29,11 @@ editor:
 source('dependencies.R')
 knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
 #install.packages("stargazer")
-#library(stargazer)
+library(stargazer)
 #library(flexmix)
 
 #library(qpcR)
+
 ```
 
 # Research Questions
@@ -351,7 +352,7 @@ HSPhy_NextGen_SchoolSum%>%
     geom_histogram(alpha=0.6, binwidth = 15) +
     scale_fill_viridis(discrete=TRUE) +
     scale_color_viridis(discrete=TRUE) +
-    #theme_ipsum() +
+    #theme_classic() +
     theme(
       legend.position="none",
       panel.spacing = unit(0.1, "lines"),
@@ -362,7 +363,7 @@ HSPhy_NextGen_SchoolSum%>%
       labs( y = "",
             title = "School Performance Level Distribution",
             x = "% Students at Performance Level",
-            caption = "NextGen HS Physics MCAS")
+            caption = "NextGen HS Physics MCAS") +scale_fill_brewer(palette="Paired") + scale_color_brewer(palette="Paired")
 
 
 ```
@@ -393,7 +394,7 @@ HSPhy_NextGen_SchoolSum%>%
       labs( y = "",
             title = "School Performance by Practice Category",
             x = "% Points Earned",
-            caption = "NextGen HS Physics MCAS")
+            caption = "NextGen HS Physics MCAS") +scale_fill_brewer(palette="Paired") + scale_color_brewer(palette="Paired")
   #ggtitle("Practice Category Performance")
 
 
@@ -422,7 +423,9 @@ the right.
             title = "School Performance Variation by Practice Category",
             x = "SD Diff",
             caption = "NextGen HS Physics MCAS") +
-    facet_wrap(~`Practice Cat`)
+    facet_wrap(~`Practice Cat`) + scale_fill_brewer(palette="Paired") + scale_color_brewer(palette="Paired")
+
+
 ```
 
 ## Mathematics and Data vs. Evidence Reasoning and Modeling (Practice Category)
@@ -455,8 +458,8 @@ HSPhy_NextGen_SchoolSum%>%
     labs( y = "SD Diff",
             title = "Student Performance Variation by Practice Category",
             x = "",
-            caption = "NextGen HS Physics MCAS") +
-  facet_wrap(~`Practice Cat`)
+            caption = "NextGen HS Physics MCAS") + 
+  facet_wrap(~`Practice Cat`)+scale_fill_brewer(palette="Blues")
 
 
       
@@ -481,7 +484,7 @@ HSPhy_NextGen_SchoolSum%>%
             x = "",
             caption = "NextGen HS Physics MCAS") +
     #xlab("")+
-  facet_wrap(~`EM Perf Stat`)
+  facet_wrap(~`EM Perf Stat`)+scale_fill_brewer(palette="Paired")
 ```
 
 These images seem to suggest that students at all schools seem to have
@@ -506,7 +509,8 @@ HSPhy_NextGen_SchoolSum%>%
             x = "",
             caption = "NextGen HS Physics MCAS") +
     #xlab("")+
-  facet_wrap(~`Practice Cat`)
+  facet_wrap(~`Practice Cat`) +scale_fill_brewer(palette="Blues") 
+
 ```
 
 ```{r}
@@ -527,7 +531,7 @@ HSPhy_NextGen_SchoolSum%>%
             x = "",
             caption = "NextGen HS Physics MCAS") +
     #xlab("")+
-  facet_wrap(~`EM Perf Stat`, scale ="free_y")
+  facet_wrap(~`EM Perf Stat`, scale ="free_y") +scale_fill_brewer(palette="Paired") 
 
 ```
 
@@ -542,10 +546,10 @@ partitioned by Content `Reporting Category` of `Motion and Forces`,
   HSPhy_NextGen_SchoolSum%>%
   select(`EM Perf Stat`, `MF Diff SD`, `EN Diff SD`, `WA Diff SD` )%>%
   pivot_longer(c(2:4), names_to = "Report Cat", values_to = "SD Diff")%>%
-  ggplot( aes(x=`SD Diff`, color=`Report Cat`, fill=`Report Cat`)) +
+  ggplot( aes(x=`SD Diff`, color=`Report Cat`, fill=`Report Cat`, color = "grey")) +
     geom_histogram(alpha=0.6, binwidth = 3) +
-    scale_fill_viridis(discrete=TRUE) +
-    scale_color_viridis(discrete=TRUE) +
+    #scale_fill_viridis(discrete=TRUE) +
+    #scale_color_viridis(discrete=TRUE) +
     #theme_ipsum() +
     theme(
       panel.spacing = unit(0.1, "lines"),
@@ -555,7 +559,7 @@ partitioned by Content `Reporting Category` of `Motion and Forces`,
             title = "School Performance Variation by Content Reporting Category",
             x = "SD Diff",
             caption = "NextGen HS Physics MCAS") +
-  facet_wrap(~`Report Cat`)
+  facet_wrap(~`Report Cat`) + scale_fill_brewer(palette="Paired") + scale_color_brewer(palette="Paired") 
 
 ```
 
@@ -577,7 +581,7 @@ HSPhy_NextGen_SchoolSum%>%
       labs( y = "",
             title = "Student Performance by Content Reporting Category",
             x = "% Points Earned",
-            caption = "NextGen HS Physics MCAS")
+            caption = "NextGen HS Physics MCAS") + scale_fill_brewer(palette="Paired") + scale_color_brewer(palette="Paired") 
   #ggtitle("Practice Category Performance")
 
 
@@ -612,7 +616,7 @@ HSPhy_NextGen_SchoolSum%>%
             title = "School Performance Variation by Content Reporting Category",
             x = "",
             caption = "NextGen HS Physics MCAS") +
-  facet_wrap(~`Report Cat`)
+  facet_wrap(~`Report Cat`) + scale_fill_brewer(palette="Blues") 
 
 
       
@@ -637,7 +641,7 @@ HSPhy_NextGen_SchoolSum%>%
             x = "",
             caption = "NextGen HS Physics MCAS") +
     #xlab("")+
-  facet_wrap(~`EM Perf Stat`)
+  facet_wrap(~`EM Perf Stat`)+  scale_fill_brewer(palette="Blues") 
 
 
 HSPhy_NextGen_SchoolSum%>%
@@ -659,7 +663,7 @@ HSPhy_NextGen_SchoolSum%>%
             x = "",
             caption = "NextGen HS Physics MCAS") +
     #xlab("")+
-  facet_wrap(~`EM Perf Stat`)
+  facet_wrap(~`EM Perf Stat`, scales = "free") + scale_fill_brewer(palette="Blues")
 
 
 ```
@@ -725,7 +729,7 @@ HSPhy_NextGen_SchoolSum%>%
             x = "",
             caption = "NextGen HS Physics MCAS") +
     #xlab("")+
-  facet_wrap(~`School Size`, scale = "free")
+  facet_wrap(~`School Size`, scale = "free") + scale_fill_brewer(palette="Paired") 
 
 
 HSPhy_NextGen_SchoolSum%>%
@@ -747,7 +751,7 @@ HSPhy_NextGen_SchoolSum%>%
             x = "",
             caption = "NextGen HS Physics MCAS") +
     #xlab("")+
-  facet_wrap(~`School Size`)
+  facet_wrap(~`School Size`) + scale_fill_brewer(palette="Paired") 
 
 ```
 
@@ -891,7 +895,7 @@ BIC(fit_md_wa_interact)
 
 ```
 
-## Fit 3 b): Explanatory: `MD Diff SD`, `WA Diff SD`, `MD Diff SD`
+## Fit 3 b): Explanatory: `MD Diff SD`, `WA Diff SD`, `MD Diff SD`*`WA Diff SD`
 
 When we consider adding a second content reporting category, `Motion and Forces`, only `MD Diff SD` is statistically significant. So we will control for content with just one reporting category, `Waves`.
 
@@ -953,8 +957,11 @@ Since our original model, `fit_md`, has the ***2nd lowest AIC***, ***lowest BIC*
 
 ```{r}
 
-fit_md_size = lm(`EorM%` ~ (`MD Diff SD`  + `School Size` + `School Size`* `MD Diff SD`), data = HSPhy_NextGen_SchoolSum)
-summary(fit_md_size)
+
+stargazer(fit_md,  fit_md_wa, fit_md_wa_size, type="text",
+ dep.var.labels=c("EorM%"),
+ covariate.labels=c("MD SD Diff", "WA SD Diff", "School Size"), out="models.txt", title = "High School Physics MCAS")
+
 AIC(fit_md_size)
 BIC(fit_md_size)
 
@@ -1025,7 +1032,7 @@ ggplot(data = HSPhy_NextGen_SchoolSum, aes(x = `MD Diff SD`, y = `EorM%`, color 
    labs( y = "EorM%",
             title = "Variance in Mathematics vs. Student Achievement",
             x = "MD Diff SD",
-            caption = "NextGen HS Physics MCAS")
+            caption = "NextGen HS Physics MCAS") 
 ```
 
 
@@ -1171,6 +1178,13 @@ BIC(fit_weight_md_size)
 ```
 
 ## Result of Test
+
+```{r}
+stargazer(fit_weight, fit_weight_md, fit_weight_md_size, type="text",
+ dep.var.labels=c("Report Cat%"),
+ covariate.labels=c("Report Cat. Weight", "MD SD Diff", "School Size"), out="report_cat_models.txt", title = "Reporting Category Weight")
+
+```
 
 Since this model has the ***lowest AIC***, ***lowest BIC***, ***highest adjusted $r^2$***, and all terms are statistically significant, we can conclude
 
