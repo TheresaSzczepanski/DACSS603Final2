@@ -2,7 +2,7 @@
 title: "DACSS603Final"
 author: "Theresa Szczepanski"
 desription: "MCAS G9 Science Analysis"
-date: "10/22/2023"
+date: "12/07/2023"
 
 format:
   html:
@@ -80,7 +80,7 @@ support the state's current high quality instructional materials
 initiatives. The state compiles school's performance disaggregated by
 each MCAS question item [@MCASIT].
 
-Using the curricular information provided in state wide Next Generation
+Using the curricular information provided in statewide Next Generation
 MCAS High School Introductory Physics Item reports together with
 school-level student performance data, we hope to address the following
 broad questions:
@@ -377,7 +377,7 @@ these practice categories.
 
 ```{r}
 
-HSPhy_NextGen_SchoolSum%>%
+hist_practice_cat_achv<-HSPhy_NextGen_SchoolSum%>%
   select(`ERM%`, `MD%`)%>%
   pivot_longer(c(1:2), names_to = "Practice Cat", values_to = "% Points")%>%
    ggplot( aes(x=`% Points`, color=`Practice Cat`, fill=`Practice Cat`)) +
@@ -396,6 +396,8 @@ HSPhy_NextGen_SchoolSum%>%
             x = "% Points Earned",
             caption = "NextGen HS Physics MCAS") +scale_fill_brewer(palette="Paired") + scale_color_brewer(palette="Paired")
   #ggtitle("Practice Category Performance")
+hist_practice_cat_achv
+ggsave("hist_practice_cat_achv.png", device="png", width=8, height=4, units="in",dpi=300)
 
 
 ```
@@ -441,7 +443,7 @@ of students classified as `Exceeding or Meeting` expectations on the MCAS have t
 ```{r}
 
 
-HSPhy_NextGen_SchoolSum%>%
+box_practice_cat_diff<-HSPhy_NextGen_SchoolSum%>%
   select(`EM Perf Stat`, `ERM Diff SD`, `MD Diff SD` )%>%
   pivot_longer(c(2:3), names_to = "Practice Cat", values_to = "SD Diff")%>%
   ggplot( aes(x= `EM Perf Stat`, y=`SD Diff`, fill= `EM Perf Stat`)) +
@@ -460,6 +462,9 @@ HSPhy_NextGen_SchoolSum%>%
             x = "",
             caption = "NextGen HS Physics MCAS") + 
   facet_wrap(~`Practice Cat`)+scale_fill_brewer(palette="Blues")
+
+box_practice_cat_diff
+ggsave("box_practice_cat_diff.png", device="png", width=8, height=6, units="in",dpi=300)
 
 
       
@@ -485,6 +490,7 @@ HSPhy_NextGen_SchoolSum%>%
             caption = "NextGen HS Physics MCAS") +
     #xlab("")+
   facet_wrap(~`EM Perf Stat`)+scale_fill_brewer(palette="Paired")
+
 ```
 
 These images seem to suggest that students at all schools seem to have
@@ -514,7 +520,7 @@ HSPhy_NextGen_SchoolSum%>%
 ```
 
 ```{r}
-HSPhy_NextGen_SchoolSum%>%
+box_practice_cat_achv<-HSPhy_NextGen_SchoolSum%>%
   select(`EM Perf Stat`, `ERM%`, `MD%` )%>%
   pivot_longer(c(2:3), names_to = "Practice Cat", values_to = "%Points")%>%
   ggplot( aes(x= `Practice Cat`, y=`%Points`, fill= `Practice Cat`)) +
@@ -531,7 +537,10 @@ HSPhy_NextGen_SchoolSum%>%
             x = "",
             caption = "NextGen HS Physics MCAS") +
     #xlab("")+
-  facet_wrap(~`EM Perf Stat`, scale ="free_y") +scale_fill_brewer(palette="Paired") 
+  facet_wrap(~`EM Perf Stat`, scale ="free_y") +scale_fill_brewer(palette="Paired")
+
+box_practice_cat_achv
+ggsave("box_practice_cat_achv.png", device="png", width=8, height=6, units="in",dpi=300)
 
 ```
 
@@ -644,12 +653,13 @@ HSPhy_NextGen_SchoolSum%>%
   facet_wrap(~`EM Perf Stat`)+  scale_fill_brewer(palette="Blues") 
 
 
-HSPhy_NextGen_SchoolSum%>%
+box_report_cat_achv<-HSPhy_NextGen_SchoolSum%>%
   select(`EM Perf Stat`, `MF%`, `EN%`, `WA%` )%>%
   pivot_longer(c(2:4), names_to = "Report Cat", values_to = "% Points")%>%
   ggplot( aes(x= `Report Cat`, y=`% Points`, fill= `Report Cat`)) +
     geom_boxplot() +
-    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    scale_fill_discrete(breaks=c('MF%', 'EN%', 'WA%'))+
+    #scale_fill_viridis(discrete = TRUE, alpha=0.6) +
     geom_jitter(color="black", size=0.4, alpha=0.9) +
     #theme_ipsum() +
     theme(
@@ -663,7 +673,11 @@ HSPhy_NextGen_SchoolSum%>%
             x = "",
             caption = "NextGen HS Physics MCAS") +
     #xlab("")+
-  facet_wrap(~`EM Perf Stat`, scales = "free") + scale_fill_brewer(palette="Blues")
+  facet_wrap(~`EM Perf Stat`, scales = "free") + scale_fill_brewer(palette="Blues")+
+scale_x_discrete(limit = c("MF%", "EN%", "WA%"))
+
+box_report_cat_achv
+ggsave("box_report_cat_achv.png", device="png", width=8, height=6, units="in",dpi=300)
 
 
 ```
@@ -1026,13 +1040,16 @@ This image displays the association between `MD Diff SD` and `EorM%`. One can se
 
 ```{r}
 
-ggplot(data = HSPhy_NextGen_SchoolSum, aes(x = `MD Diff SD`, y = `EorM%`, color = `School Size`)) +
+scat_md_size<-ggplot(data = HSPhy_NextGen_SchoolSum, aes(x = `MD Diff SD`, y = `EorM%`, color = `School Size`)) +
   geom_point() +
   geom_smooth(method="lm", se=T)+
    labs( y = "EorM%",
             title = "Variance in Mathematics vs. Student Achievement",
             x = "MD Diff SD",
             caption = "NextGen HS Physics MCAS") 
+
+scat_md_size
+ggsave("scat_md_size.png", device="png", width=8, height=4, units="in",dpi=300)
 ```
 
 
@@ -1140,7 +1157,7 @@ For our model we have:
 ```{r}
 
 
-fit_weight_md = lm(`Report Cat%` ~ `Report_Cat_Weight` + `MD Diff SD`, data = HSPhy_Cat)
+fit_weight_md = lm(`Report Cat%` ~ `Report_Cat_Weight` + `MD Diff SD` + `MD Diff SD`, data = HSPhy_Cat)
  
 summary(fit_weight_md)
 AIC(fit_weight_md)
@@ -1244,7 +1261,7 @@ BIC(fit_weight_md_size_adj)
 
 ```{r}
 
-ggplot(data = HSPhy_Cat, aes(x = `MD Diff SD`, y = `Report Cat%`, color = `Report_Cat_Weight`)) +
+scat_md_weight<-ggplot(data = HSPhy_Cat, aes(x = `MD Diff SD`, y = `Report Cat%`, color = `Report_Cat_Weight`)) +
   geom_point() +
   geom_smooth(method="lm", se=T)+
    labs( y = "Report Cat%",
@@ -1252,6 +1269,8 @@ ggplot(data = HSPhy_Cat, aes(x = `MD Diff SD`, y = `Report Cat%`, color = `Repor
             x = "MD Diff SD",
             caption = "NextGen HS Physics MCAS")#+
   #facet_wrap(~`Report_Cat_Weight`, scales = "free")
+scat_md_weight
+ggsave("scat_md_weight.png", device="png", width=8, height=4, units="in",dpi=300)
 ```
 
 
