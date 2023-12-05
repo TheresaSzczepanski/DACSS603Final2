@@ -24,7 +24,7 @@ For more information about the MCAS, see the Department of Elementary
 and Secondary Education's
 [(DESE)](https://www.doe.mass.edu/mcas/results.html) page.
 
-***This Needs to be Updated***, right now it is incomplete!
+<!-- ***This Needs to be Updated***, right now it is incomplete! -->
 
 | variable                    | Measurement Level | Values                                                                                                                           |
 |-------------------|-------------------|------------------------------------|
@@ -42,7 +42,11 @@ and Secondary Education's
 |                             |                   | `MF Pts`: Motion and Forces                                                                                                      |
 |                             |                   | `WA Pts`: Waves                                                                                                                  |
 |                             |                   | `EN Pts`: Energy                                                                                                                 |
-| `School Percent Points`     | Continuous        | Percent of points earned by Students at a school for all items in a given category                                               |
+| `Report_Cat_Weight`    | Continuous          | The percentage of points available for items in a given content area                                                                 |
+|                             |                   | `MF`: 50%                                                                                                     |
+|                             |                   | `WA`: 20%                                                                                                                  |
+|                             |                   | `EN`: 30%                                                                                                                 |
+| `Report Cat%`/ `Practice Cat%`     | Continuous        | Percent of points earned by Students at a school for all items in a given category                                               |
 |                             |                   | `MF%`: Motion and Forces                                                                                                     |
 |                             |                   | `WA%`: Waves                                                                                                                 |
 |                             |                   | `EN%`: Energy                                                                                                                |
