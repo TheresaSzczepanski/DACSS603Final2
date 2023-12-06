@@ -1177,7 +1177,7 @@ BIC(fit_weight_md)
 
 When we test for interaction between `Reporting Category Weight`: `Report_Cat_Weight` and  `Mathematics and Data`: `MD Diff SD`, 
 
-- there is not a significant interaction.
+- there is not a significant interaction between `Report_Cat_Weight` and `MD Diff SD`.
 
 ```{r}
 fit_weight_md_interact = lm(`Report Cat%` ~ `Report_Cat_Weight` + `MD Diff SD`  + `Report_Cat_Weight`*`MD Diff SD`, data = HSPhy_Cat)
@@ -1389,11 +1389,21 @@ When considering the performance of Massachusetts students on the Next Generatio
 
 1. Student performance as measured by `Reporting Cat%` and `EorM%` were negatively associated with increased variability in `Mathematics and Data`, `MD Diff SD`.
 
-This suggests that schools could benefit by spending time reviewing and supporting science teachers in implementing evidence based, best practices for the teaching of Mathematics within the Physics classroom.
+This effects were significant when controlling for variability in other Science Practice categories and Content Reporting categories. The other practice and content reporting categories did not have statistically significant effects on `EorM%` in our models. This suggests that schools could benefit by spending time reviewing and supporting science teachers in implementing evidence based, best practices for the teaching of Mathematics within the Physics classroom.
 
 2. Student performance as measured by `Reporting Cat%` was positively associated with the `Report_Cat_Weight`.
 
-There was no significant interaction between `Reporting Cat%` and `MD Diff SD`. This suggests that schools could benefit by creating a scope and sequence for the calendar year that ensures that all content areas from the Massachusetts Curriculum framework are addressed within the academic year. Perhaps items in the `Waves` category are not receiving enough instructional time within the school year as compared to those in the highest weighted `Motion and Forces` category.
+There was no significant interaction between `Reporting Cat%` and `MD Diff SD`. What remains unanswered is why this trend exists? 
+
+- Is this an issue of school planning and curriculum alignment?
+
+Schools could benefit by creating a scope and sequence for the calendar year that ensures that all content areas from the Massachusetts Curriculum framework are addressed within the academic year. Perhaps items in the `Waves` category are not receiving enough instructional time within the school year as compared to those in the highest weighted `Motion and Forces` category.
+
+- Is the content of the Motion and Forces category less difficult that Energy and Waves? 
+
+One could take a closer look at the content and skill differences across the reporting categories to see if there is some other explanation for the trends in student performance
+
+- Are there similar trends with student performance at the Middle School level?
 
 One could examine the G8 Science exam as well as the G5 Science exam by `Science Practice Category` and `Content Reporting Category` to see if there are similar trends exhibited in earlier grade levels.
 
