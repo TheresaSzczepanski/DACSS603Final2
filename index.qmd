@@ -16,6 +16,8 @@ format:
     
 bibliography: references.bib
 
+
+
 editor: 
   markdown: 
     wrap: 72
@@ -1399,9 +1401,9 @@ There was no significant interaction between `Reporting Cat%` and `MD Diff SD`. 
 
 Schools could benefit by creating a scope and sequence for the calendar year that ensures that all content areas from the Massachusetts Curriculum framework are addressed within the academic year. Perhaps items in the `Waves` category are not receiving enough instructional time within the school year as compared to those in the highest weighted `Motion and Forces` category.
 
-- Is the content of the Motion and Forces category less difficult that Energy and Waves? 
+- Is the content of the Motion and Forces category less difficult than Energy and Waves? 
 
-One could take a closer look at the content and skill differences across the reporting categories to see if there is some other explanation for the trends in student performance
+One could take a closer look at question items and the content and skill differences across the reporting categories to see if there is some other explanation for the trends in student performance.
 
 - Are there similar trends with student performance at the Middle School level?
 
